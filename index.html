@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>달달단어 (Day 1~50)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+      --primary-soft: #fff7ed;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      --warning: #d97706;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    button, input, select {
+      font-family: inherit;
+    }
+
+    .app-shell {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn, .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover, .icon-btn:hover {
+      background: var(--surface-2);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .badge-count {
+      background: var(--danger);
+      color: #fff;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .tab-btn.active .badge-count {
+      background: #fff;
+      color: var(--primary);
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* Stats Banner */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--surface-2);
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Mode Selector */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .mode-card {
+      border: 2px solid var(--border);
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 14px 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-card:hover {
+      border-color: #fdba74;
+      background: var(--primary-soft);
+    }
+
+    .mode-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    }
+
+    .mode-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .mode-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .mode-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Pill Options */
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .pill-btn.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Day Grid */
+    .day-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .day-chip {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 8px 4px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s ease;
+      position: relative;
+    }
+
+    .day-chip:hover {
+      border-color: var(--primary);
+    }
+
+    .day-chip.selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .day-chip.cleared::after {
+      content: "★";
+      position: absolute;
+      top: 1px;
+      right: 3px;
+      font-size: 9px;
+      color: #eab308;
+    }
+
+    .day-chip.selected.cleared::after {
+      color: #fef08a;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(234, 88, 12, 0.28);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(234, 88, 12, 0.35);
+    }
+
+    .start-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Game View */
+    .hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .hud-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hud-pill {
+      background: var(--surface-2);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .hud-pill.combo {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .hud-pill.hearts {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-2);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #fb923c);
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .timer-track {
+      width: 100%;
+      height: 6px;
+      background: var(--surface-2);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .timer-fill {
+      height: 100%;
+      background: #4f46e5;
+      width: 100%;
+      transition: width 0.1s linear, background-color 0.2s ease;
+    }
+
+    .question-box {
+      text-align: center;
+      padding: 24px 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+
+    .q-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .q-prompt {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      word-break: keep-all;
+    }
+
+    .q-prompt.korean {
+      font-size: 22px;
+      line-height: 1.45;
+    }
+
+    .tts-btn {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tts-btn:hover {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .choice-btn {
+      border: 2px solid var(--border);
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 14px 16px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: all 0.12s ease;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      min-height: 60px;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .choice-btn:disabled {
+      cursor: default;
+    }
+
+    .choice-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .choice-btn.correct {
+      border-color: var(--success);
+      background: var(--success-soft);
+      color: #14532d;
+    }
+
+    .choice-btn.correct .choice-num {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .choice-btn.wrong {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+      color: #7f1d1d;
+    }
+
+    .choice-btn.wrong .choice-num {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* Typing Input */
+    .typing-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .typing-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .typing-input {
+      flex: 1;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .typing-input:focus {
+      border-color: var(--primary);
+    }
+
+    .typing-input.correct {
+      border-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .typing-input.wrong {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .submit-btn {
+      padding: 0 20px;
+      border: none;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .hint-text {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .feedback-bar {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .feedback-bar.ok {
+      background: var(--success-soft);
+      color: #14532d;
+    }
+
+    .feedback-bar.no {
+      background: var(--danger-soft);
+      color: #7f1d1d;
+    }
+
+    .next-btn {
+      border: none;
+      background: var(--text);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Result Screen */
+    .result-hero {
+      text-align: center;
+      padding: 16px 0 20px;
+    }
+
+    .grade-badge {
+      width: 74px;
+      height: 74px;
+      border-radius: 22px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      min-width: 140px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-2);
+    }
+
+    .btn-primary {
+      flex: 1;
+      min-width: 140px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .wrong-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .word-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--surface-2);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .word-row-left {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .word-num {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .word-en {
+      font-weight: 800;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .word-ko {
+      color: #334155;
+      font-size: 13px;
+    }
+
+    /* Wordbook / Wrong Notes */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .select-box {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .word-list-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .mini-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 100;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .toast.show { opacity: 1; }
+
+    /* Lock Screen */
+    .lock-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #fff7ed 0%, #f8fafc 60%, #eef2ff 100%);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lock-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px 24px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+      text-align: center;
+    }
+
+    .lock-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      color: #fff;
+      font-size: 26px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.25);
+    }
+
+    .lock-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .lock-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+
+    .lock-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.15s ease;
+    }
+
+    .lock-input:focus {
+      border-color: var(--primary);
+    }
+
+    .lock-input.error {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .lock-err {
+      min-height: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--danger);
+      margin-bottom: 10px;
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .mode-grid { grid-template-columns: 1fr; }
+      .day-grid { grid-template-columns: repeat(5, 1fr); }
+      .choices-grid { grid-template-columns: 1fr; }
+      .q-prompt { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lock-overlay" id="lockOverlay">
+    <div class="lock-card">
+      <div class="lock-icon">달</div>
+      <div class="lock-title">달달단어 입장</div>
+      <div class="lock-desc">초대받은 사용자만 이용할 수 있습니다.<br />비밀번호를 입력해 주세요.</div>
+      <input type="password" class="lock-input" id="lockInput" placeholder="비밀번호 입력" autocomplete="off" />
+      <div class="lock-err" id="lockErr"></div>
+      <button class="start-btn" id="btnUnlock">입장하기</button>
+    </div>
+  </div>
+  <canvas id="confettiCanvas" class="hidden"></canvas>
+  <div class="app-shell">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">달</div>
+        <div>
+          <div class="brand-title">달달단어</div>
+          <div class="brand-sub">Day 01 ~ Day 50 · 총 2,000단어 수록</div>
+        </div>
+      </div>
+      <nav class="nav-actions">
+        <button class="tab-btn active" data-tab="setup" id="tabSetup">게임 설정</button>
+        <button class="tab-btn" data-tab="wrong" id="tabWrong">오답 노트 <span class="badge-count" id="wrongBadge">0</span></button>
+        <button class="tab-btn" data-tab="book" id="tabBook">단어장</button>
+        <button class="icon-btn" id="soundToggle" title="효과음 켜기/끄기">🔊</button>
+        <button class="icon-btn" id="btnRelock" title="화면 잠금">🔒</button>
+      </nav>
+    </header>
+
+    <!-- VIEW: SETUP -->
+    <main id="viewSetup" class="view-section" style="display:flex; flex-direction:column; gap:14px;">
+      <!-- Stats -->
+      <section class="card">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-val" id="statTotalWords">2,000</div>
+            <div class="stat-label">수록 단어</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="statClearedDays">0 / 50</div>
+            <div class="stat-label">완료한 Day</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="statBestScore">0</div>
+            <div class="stat-label">최고 점수</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="statBestCombo">0</div>
+            <div class="stat-label">최고 콤보</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Test Type -->
+      <section class="card">
+        <div class="section-title">1. 테스트 유형 선택</div>
+        <div class="mode-grid" id="modeGrid">
+          <button class="mode-card selected" data-mode="meaning">
+            <div class="mode-icon">📖</div>
+            <div class="mode-name">뜻 테스트</div>
+            <div class="mode-desc">영단어를 보고 알맞은 한국어 뜻 맞히기</div>
+          </button>
+          <button class="mode-card" data-mode="word">
+            <div class="mode-icon">✍️</div>
+            <div class="mode-name">단어 테스트</div>
+            <div class="mode-desc">한국어 뜻을 보고 알맞은 영단어 맞히기</div>
+          </button>
+          <button class="mode-card" data-mode="mix">
+            <div class="mode-icon">⚡</div>
+            <div class="mode-name">믹스 챌린지</div>
+            <div class="mode-desc">뜻 테스트 + 단어 테스트 랜덤 출제</div>
+          </button>
+        </div>
+
+        <div class="section-title" style="margin-top:16px;">2. 풀이 방식 &amp; 게임 규칙</div>
+        <div class="options-row" style="margin-bottom:10px;">
+          <span style="font-size:13px; color:var(--text-muted); font-weight:600; min-width:68px;">풀이 방식</span>
+          <button class="pill-btn selected" data-input="choice">객관식 (4지선다)</button>
+          <button class="pill-btn" data-input="typing">주관식 (직접 입력)</button>
+        </div>
+        <div class="options-row" style="margin-bottom:10px;">
+          <span style="font-size:13px; color:var(--text-muted); font-weight:600; min-width:68px;">문항 수</span>
+          <button class="pill-btn" data-count="10">10문제</button>
+          <button class="pill-btn selected" data-count="20">20문제</button>
+          <button class="pill-btn" data-count="40">40문제</button>
+          <button class="pill-btn" data-count="0">선택 범위 전체</button>
+        </div>
+        <div class="options-row">
+          <span style="font-size:13px; color:var(--text-muted); font-weight:600; min-width:68px;">게임 룰</span>
+          <button class="pill-btn selected" data-rule="normal">자유 모드</button>
+          <button class="pill-btn" data-rule="time">타임어택 (10초/문제)</button>
+          <button class="pill-btn" data-rule="survival">서바이벌 (하트 3개)</button>
+        </div>
+      </section>
+
+      <!-- Day Selection -->
+      <section class="card">
+        <div class="section-title">
+          <span>3. Day 범위 선택 <span id="selectedDayCount" style="color:var(--primary); font-size:13px;">(Day 1 선택 · 40단어)</span></span>
+          <div class="options-row">
+            <button class="mini-btn" id="btnPresetAll">전체 (1~50)</button>
+            <button class="mini-btn" id="btnPresetClear">선택 해제</button>
+          </div>
+        </div>
+        <div class="options-row" style="margin-bottom:8px;">
+          <button class="pill-btn" data-range="1-10">Day 1~10</button>
+          <button class="pill-btn" data-range="11-20">Day 11~20</button>
+          <button class="pill-btn" data-range="21-30">Day 21~30</button>
+          <button class="pill-btn" data-range="31-40">Day 31~40</button>
+          <button class="pill-btn" data-range="41-50">Day 41~50</button>
+        </div>
+        <div class="day-grid" id="dayGrid"></div>
+      </section>
+
+      <button class="start-btn" id="btnStartGame">테스트 시작하기</button>
+    </main>
+
+    <!-- VIEW: GAMEPLAY -->
+    <section id="viewGame" class="card hidden">
+      <div class="hud">
+        <div class="hud-group">
+          <button class="mini-btn" id="btnQuitGame">← 나가기</button>
+          <span class="hud-pill" id="hudProgress">1 / 20</span>
+          <span class="hud-pill" id="hudScore">0점</span>
+          <span class="hud-pill combo hidden" id="hudCombo">🔥 0 COMBO</span>
+        </div>
+        <div class="hud-group">
+          <span class="hud-pill hearts hidden" id="hudHearts">❤️❤️❤️</span>
+          <span class="hud-pill hidden" id="hudTimer">⏱ 10.0s</span>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="timer-track hidden" id="timerTrack">
+        <div class="timer-fill" id="timerFill"></div>
+      </div>
+
+      <div class="question-box">
+        <div class="q-meta" id="qMeta">DAY 01 · #0001 · 뜻 테스트</div>
+        <div class="q-prompt" id="qPrompt">provide</div>
+        <div>
+          <button class="tts-btn" id="btnSpeak">🔊 발음 듣기</button>
+        </div>
+      </div>
+
+      <!-- Multiple Choice Area -->
+      <div class="choices-grid" id="choicesGrid"></div>
+
+      <!-- Typing Area -->
+      <div class="typing-wrap hidden" id="typingWrap">
+        <div class="typing-row">
+          <input type="text" class="typing-input" id="typingInput" placeholder="정답을 입력하세요..." autocomplete="off" autocapitalize="off" spellcheck="false" />
+          <button class="submit-btn" id="btnSubmitTyping">확인</button>
+        </div>
+        <div class="hint-text">
+          <span id="typingHint">힌트: 첫 글자 보기 버튼을 눌러보세요</span>
+          <button class="mini-btn" id="btnShowHint">💡 힌트 보기</button>
+        </div>
+      </div>
+
+      <div class="feedback-bar hidden" id="feedbackBar">
+        <span id="feedbackText">정답입니다!</span>
+        <button class="next-btn" id="btnNextQuestion">다음 문제 (Enter)</button>
+      </div>
+    </section>
+
+    <!-- VIEW: RESULT -->
+    <section id="viewResult" class="card hidden">
+      <div class="result-hero">
+        <div class="grade-badge" id="resGrade">S</div>
+        <h2 id="resTitle" style="font-size:22px; font-weight:800;">테스트 완료!</h2>
+        <p id="resSub" style="color:var(--text-muted); font-size:14px; margin-top:4px;"></p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="resScore">0</div>
+          <div class="stat-label">최종 점수</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="resAccuracy">0%</div>
+          <div class="stat-label">정답률</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="resCombo">0</div>
+          <div class="stat-label">최대 콤보</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="resTime">0초</div>
+          <div class="stat-label">소요 시간</div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-secondary" id="btnBackToSetup">설정으로 돌아가기</button>
+        <button class="btn-primary hidden" id="btnRetryWrong">틀린 단어만 다시 풀기</button>
+        <button class="btn-primary" id="btnPlayAgain">같은 범위 다시 풀기</button>
+      </div>
+
+      <div id="resWrongSection" class="hidden" style="margin-top:20px;">
+        <div class="section-title">이번 테스트 오답 목록</div>
+        <div class="wrong-list" id="resWrongList"></div>
+      </div>
+    </section>
+
+    <!-- VIEW: WRONG NOTES -->
+    <section id="viewWrong" class="card hidden">
+      <div class="section-title">
+        <span>오답 노트 (<span id="wrongTotalCount">0</span>단어)</span>
+        <div class="options-row">
+          <button class="mini-btn" id="btnTestWrongMeaning">뜻 테스트</button>
+          <button class="mini-btn" id="btnTestWrongWord">단어 테스트</button>
+          <button class="mini-btn" id="btnClearWrong" style="color:var(--danger);">전체 비우기</button>
+        </div>
+      </div>
+      <div id="wrongListContainer" class="word-list-scroll"></div>
+    </section>
+
+    <!-- VIEW: WORDBOOK -->
+    <section id="viewBook" class="card hidden">
+      <div class="section-title">전체 단어장 (Day 01 ~ Day 50)</div>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="bookSearchInput" placeholder="영단어 또는 한글 뜻 검색..." />
+        <select class="select-box" id="bookDaySelect">
+          <option value="all">전체 Day (2,000단어)</option>
+        </select>
+      </div>
+      <div id="bookCountInfo" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
+      <div id="bookListContainer" class="word-list-scroll"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Embedded 2000 vocabulary dataset: [id, day, word, meaning]
+    const WORDS = [[1,1,"provide","v. 공급하다, 준비하다"],[2,1,"develop","v. 개발하다, 발달[발전]하다"],[3,1,"service","n. 서비스, 봉사, 공공 업무"],[4,1,"inform","v. 알리다, 통지하다"],[5,1,"relationship","n. 관계"],[6,1,"improve","v. 향상시키다, 향상하다"],[7,1,"individual","n. 개인 a. 개인의, 개인적인"],[8,1,"require","v. 필요로 하다, 요구하다"],[9,1,"advise","v. 조언하다, 충고하다"],[10,1,"social","a. 사회의, 사교적인"],[11,1,"amount","n. 총액, 총계, 양 v. 총계가 ~이 되다"],[12,1,"behave","v. (예의 바르게) 행동하다"],[13,1,"employ","v. 고용하다, (기술·방법 등을) 쓰다"],[14,1,"attitude","n. 태도, 입장"],[15,1,"research","n. 연구 v. 연구하다, 조사하다"],[16,1,"audience","n. 청중, 관객"],[17,1,"volunteer","n. 자원봉사, 지원자 v. 자원하다"],[18,1,"influence","n. 영향, 영향을 미치는 것[사람] v. 영향을 끼치다"],[19,1,"terrible","a. 끔찍한, 무서운"],[20,1,"opportunity","n. 기회"],[21,1,"ability","n. 능력"],[22,1,"expense","n. 비용, 지출"],[23,1,"local","a. 지방의, 지역의, 장소의"],[24,1,"involve","v. 포함하다, 관련되다, (사건 등에) 말려들게 하다"],[25,1,"stress","n. 스트레스, 강조 v. 강조하다, 압력을 주다"],[26,1,"therefore","ad. 그러므로, 그 결과"],[27,1,"positive","a. 긍정적인, 확신하는"],[28,1,"average","n. 평균 a. 평균의 v. 평균 ~이다"],[29,1,"ride","v. (탈것을) 타다 n. 타기, 타고가기"],[30,1,"encourage","v. 촉구하다, 격려하다"],[31,1,"determine","v. 결정하다, 결심하다"],[32,1,"international","a. 국제의, 국제적인"],[33,1,"consume","v. 소비하다, 먹다[마시다]"],[34,1,"impress","v. 깊은 인상을 주다, 감동시키다"],[35,1,"object","n. 물체, 목표 v. 반대하다"],[36,1,"available","a. 이용 가능한, 쓸모 있는"],[37,1,"contain","v. 함유하다, 포함하다, 억제하다"],[38,1,"recognize","v. 인지하다, 인정하다"],[39,1,"material","n. 재료, 물질 a. 물질의"],[40,1,"comfort","v. 편안하게 하다, 위로하다 n. 편안, 위로"],[41,2,"emotion","n. 감정"],[42,2,"amaze","v. 놀라게 하다"],[43,2,"reduce","v. 줄이다, 낮추다"],[44,2,"discover","v. 발견하다"],[45,2,"decide","v. 결심하다, 결정하다"],[46,2,"benefit","n. 이익 v. 이익이 되다"],[47,2,"affect","v. 영향을 미치다, ~인 체하다"],[48,2,"level","n. 수준, 수평 a. 수평의 v. 평평하게 하다"],[49,2,"chemistry","n. 화학, 교감(交感)"],[50,2,"immediate","a. 직접의, 즉각적인"],[51,2,"thus","ad. 그러므로, 따라서"],[52,2,"proper","a. 적절한, 알맞은"],[53,2,"performance","n. 공연, 성적, 성과"],[54,2,"essence","n. (사물의) 본질, 정수(精髓)"],[55,2,"economic","a. 경제의, 경제학의"],[56,2,"cell","n. 세포, 작은 방, 독방"],[57,2,"focus","n. 초점 v. 집중하다"],[58,2,"issue","n. 논란거리, 발행, 발행물 v. 발행하다"],[59,2,"participate","v. 참여하다, 참가하다 (in)"],[60,2,"demand","v. 요구하다 n. 수요"],[61,2,"occur","v. (사건이) 일어나다, 발생하다"],[62,2,"complex","a. 복잡한 n. 복합체"],[63,2,"define","v. 정의하다, 한계 짓다, 한정하다"],[64,2,"proud","a. 자랑스러워하는, 자만하는"],[65,2,"aware","a. 인지하는, 알고 있는"],[66,2,"contact","n. 접촉 v. 접촉하다"],[67,2,"profession","n. 직업, 직종"],[68,2,"detail","n. 세부 v. 상술하다"],[69,2,"approach","v. 접근하다 n. 접근"],[70,2,"career","n. 직업, 경력"],[71,2,"package","n. 꾸러미, 포장 v. 포장하다"],[72,2,"disappear","v. 사라지다"],[73,2,"novel","n. (장편) 소설 a. 참신한"],[74,2,"secure","a. 안전한 v. 안전하게 하다, 확보하다"],[75,2,"fashion","n. 유행, 패션, 방식 v. 만들어 내다"],[76,2,"despite","p. ~에도 불구하고"],[77,2,"background","n. 배경, 배경 지식, 이유"],[78,2,"solution","n. 해결, 해결책, 용액"],[79,2,"generate","v. 일으키다, 발생시키다"],[80,2,"eventually","ad. 결국"],[81,3,"decrease","v. 줄다[감소하다], 줄이다 n. 감소"],[82,3,"recycle","v. 재활용하다"],[83,3,"desire","n. 욕망, 욕구 v. 바라다"],[84,3,"balance","n. 균형, 은행 잔고 v. 균형을 이루다"],[85,3,"negative","a. 부정적인"],[86,3,"follow","v. 따라가다, (규칙을) 따르다"],[87,3,"account","n. 은행 계좌, 이야기, 설명 v. 설명하다"],[88,3,"publish","v. 발표하다, 출판하다"],[89,3,"occasion","n. 경우, 특별한 일"],[90,3,"replace","v. 대체하다"],[91,3,"constant","a. 일정한, 불변의 n. (수학에서의) 상수"],[92,3,"expert","n. 전문가"],[93,3,"term","n. 용어, 기간, 학기"],[94,3,"relieve","v. 경감하다, 안도시키다"],[95,3,"describe","v. 묘사하다, 표현하다"],[96,3,"biology","n. 생물학"],[97,3,"due","a. 만기의, ~하기로 되어 있는"],[98,3,"equipment","n. 장치, 장비"],[99,3,"congratulate","v. 축하하다"],[100,3,"birth","n. 탄생"],[101,3,"compose","v. 구성하다, 작곡하다, 작문하다"],[102,3,"genius","n. 천재, 천재성"],[103,3,"reflect","v. 반영하다, 반사하다, 숙고하다"],[104,3,"cause","v. ~의 원인이 되다, 야기하다 n. 원인"],[105,3,"frequent","a. 빈번한 v. (장소·모임에) 자주 가다"],[106,3,"factor","n. 요인, 요소"],[107,3,"extreme","a. 극단의 n. 극단"],[108,3,"tend","v. (~하는) 경향이 있다 (to), 돌보다"],[109,3,"politics","n. 정치, 정치학"],[110,3,"insist","v. 주장하다"],[111,3,"extend","v. 연장하다, 넓히다"],[112,3,"lonely","a. 외로운"],[113,3,"habitat","n. 서식지, 주거지"],[114,3,"mental","a. 정신의"],[115,3,"steady","a. 안정된, 한결같은, 꾸준한"],[116,3,"exchange","v. 교환하다"],[117,3,"active","a. 활동적인, 적극적인"],[118,3,"species","n. (생물 분류상의) 종(種)"],[119,3,"athletic","a. 운동의, 운동 경기의"],[120,3,"dental","a. 치아의"],[121,4,"delight","n. 기쁨 v. 기쁘게 하다"],[122,4,"confident","a. 자신 있는"],[123,4,"gradually","ad. 점차, 서서히"],[124,4,"shadow","n. 그림자 v. 그늘지게 하다"],[125,4,"access","n. 접근, 이용 v. 접근하다"],[126,4,"announce","v. 발표하다, 알리다"],[127,4,"allow","v. 허락하다, 인정하다"],[128,4,"firm","a. 확고한, 단단한 n. 회사"],[129,4,"vary","v. 바꾸다, 변하다, 다르다"],[130,4,"injure","v. 상처를 입히다, 손상시키다"],[131,4,"permit","v. 허용[허락]하다"],[132,4,"response","n. 응답, 반응"],[133,4,"threat","n. 위협, 협박"],[134,4,"electricity","n. 전기"],[135,4,"disabled","a. 장애를 가진, 무능력하게 된"],[136,4,"lack","n. 부족 v. ~이 부족하다"],[137,4,"signify","v. 의미하다, 중요하다"],[138,4,"concentrate","v. 집중하다"],[139,4,"emphasize","v. 강조하다"],[140,4,"astronomy","n. 천문학"],[141,4,"flood","n. 홍수 v. 범람시키다"],[142,4,"fuel","n. 연료 v. 연료를 가하다"],[143,4,"manufacture","v. 제조하다 n. 제조(업), 제품"],[144,4,"movement","n. 움직임, 운동"],[145,4,"capable","a. ~을 할 수 있는, 유능한"],[146,4,"combine","v. 결합시키다, 겸비하다"],[147,4,"gene","n. 유전자"],[148,4,"increase","v. (수량이) 증가하다 n. 증가, 이자"],[149,4,"victim","n. 희생, 희생자"],[150,4,"pressure","n. 압력, 압박 v. 압력을 가하다"],[151,4,"accompany","v. 동반[동행]하다, 수반하다"],[152,4,"frustrate","v. 좌절시키다"],[153,4,"construct","v. 건설하다"],[154,4,"dwindle","v. 점점 줄어들다, 저하되다"],[155,4,"commerce","n. 상업, 교역"],[156,4,"entertain","v. 즐겁게 하다"],[157,4,"predict","v. 예언하다, 예측하다"],[158,4,"apologize","v. 사과하다"],[159,4,"sight","n. 시야, 광경, 시력"],[160,4,"quantity","n. 양(量)"],[161,5,"conclude","v. 결론짓다, 끝내다"],[162,5,"donate","v. 기부하다"],[163,5,"personality","n. 개성, 성격, 특색"],[164,5,"struggle","v. 싸우다, 노력하다 n. 투쟁, 노력"],[165,5,"advantage","n. 유리한 점, 이익"],[166,5,"variety","n. 다양, 다양성"],[167,5,"enable","v. 가능하게 하다"],[168,5,"instruction","n. 지시, 제품 사용 설명서, 가르침"],[169,5,"assume","v. 추정하다, (태도 등을) 취하다"],[170,5,"attempt","v. 시도하다 n. 시도"],[171,5,"incredible","a. 믿을 수 없는, (믿기 어려울 만큼) 굉장한"],[172,5,"feature","n. 특징, 특집 기사, 얼굴 생김새 v. ~을 특징으로 하다"],[173,5,"confuse","v. 혼동하다, 혼란시키다"],[174,5,"electronic","a. 전자의"],[175,5,"absorb","v. 흡수하다, (사람·마음을) 열중시키다"],[176,5,"indicate","v. 가리키다, 나타내다"],[177,5,"analyze","v. 분석하다"],[178,5,"stock","n. 재고품, 저장, 가축 v. 저장하다, (물품을) 들여놓다"],[179,5,"resident","n. 거주자"],[180,5,"labor","n. 노동, 산고 v. 노동하다"],[181,5,"remark","v. 의견을 말하다, ~에 주목하다 n. 의견, 주목"],[182,5,"moral","a. 도덕적인"],[183,5,"embarrassed","a. 당황한"],[184,5,"claim","v. 주장하다 n. 요구, 주장"],[185,5,"reasonable","a. 논리적인, 분별력이 있는"],[186,5,"interrupt","v. 방해하다, 중단하다"],[187,5,"discount","n. 할인 v. 할인하다"],[188,5,"creature","n. 생물, 피조물"],[189,5,"heal","v. 치료하다, 낫게 하다"],[190,5,"establish","v. 설립하다, 확립하다, 제정하다"],[191,5,"revolution","n. 혁명, 갑작스런 변화, 회전"],[192,5,"criticize","v. 비난하다"],[193,5,"convince","v. 확신시키다, 납득시키다"],[194,5,"efficient","a. 효율적인, 유능한"],[195,5,"stranger","n. 낯선 사람, 문외한"],[196,5,"tide","n. 조수(潮水), 흐름"],[197,5,"obtain","v. 획득하다, 통용되다, 행해지다"],[198,5,"assist","v. 도움을 주다"],[199,5,"disaster","n. 재앙, 재난, 재해"],[200,5,"terrific","a. 굉장한, 훌륭한"],[201,6,"specific","a. 구체적인, 특정한"],[202,6,"react","v. 반응하다, 반작용하다"],[203,6,"independent","a. 독립적인"],[204,6,"theory","n. 이론"],[205,6,"qualify","v. 자격을 얻다"],[206,6,"consider","v. 숙고하다, 고려하다"],[207,6,"recall","v. 상기하다, 철회하다, 회수하다 n. 상기, 철회"],[208,6,"risk","n. 위험 v. 위험을 감수하다"],[209,6,"treatment","n. 취급, 대우, 치료(법)"],[210,6,"engage","v. 관여하다, 약속하다, 약혼하다"],[211,6,"motivate","v. 동기를 부여하다"],[212,6,"clue","n. 실마리, 단서"],[213,6,"cancer","n. 암, 악성 종양"],[214,6,"elder","a. 나이가 위인 n. 연장자"],[215,6,"depress","v. 우울하게 하다, 의기소침[낙담]하게 하다"],[216,6,"fascinate","v. 매료시키다, 마음을 빼앗다"],[217,6,"violent","a. 난폭한, 폭력적인"],[218,6,"alarm","n. 놀람, 경보"],[219,6,"edge","n. 가장자리, 날카로움, 우위"],[220,6,"deserve","v. ~을 받을 만하다[가치가 있다]"],[221,6,"route","n. 길, 통로, 항로"],[222,6,"psychology","n. 심리, 심리학"],[223,6,"passion","n. 열정"],[224,6,"import","v. 수입하다, 의미하다 n. 수입"],[225,6,"purchase","v. 구매하다 n. 구매"],[226,6,"conscience","n. 양심"],[227,6,"pose","v. 자세를 취하다, (문제를) 제기하다 n. 자세"],[228,6,"length","n. 길이"],[229,6,"severe","a. 심한, 엄격한"],[230,6,"decade","n. 10년, 10년간"],[231,6,"occupy","v. (시간·장소를) 차지하다, 전념하다"],[232,6,"acquire","v. 습득하다"],[233,6,"interact","v. 상호 작용하다"],[234,6,"brief","a. 간단한 n. 간단한 보고 v. 간단히 알리다"],[235,6,"observe","v. 관찰하다, ~을 보다, 준수하다"],[236,6,"poetry","n. 시, 운문"],[237,6,"salary","n. 급료, 봉급"],[238,6,"grain","n. 곡물, 낟알"],[239,6,"meaningful","a. 의미 있는, 의미심장한"],[240,6,"weed","n. 잡초 v. 잡초를 제거하다"],[241,7,"survival","n. 생존"],[242,7,"comment","n. 논평, 주석(註釋) v. 논평하다"],[243,7,"leap","v. 뛰다, 도약하다 n. 도약"],[244,7,"survey","n. 설문 조사 v. 조사하다, 둘러보다"],[245,7,"typical","a. 전형적인, 대표적인"],[246,7,"mere","a. 단지 ~에 불과한"],[247,7,"mechanic","n. 기계공"],[248,7,"mood","n. 기분, 분위기"],[249,7,"approve","v. 찬성하다, 승인하다"],[250,7,"rural","a. 시골의"],[251,7,"finance","n. 재정, 재무, 금융 v. 자금을 조달하다"],[252,7,"seek","v. 찾다, 추구하다, 노력하다"],[253,7,"operation","n. 작업, 운영, 수술"],[254,7,"crime","n. 범죄"],[255,7,"awful","a. 끔찍한, 지독한"],[256,7,"series","n. 연속, 시리즈물"],[257,7,"exhausted","a. 고갈된, 기진맥진한"],[258,7,"absolute","a. 완전한, 절대적인"],[259,7,"surround","v. 둘러싸다"],[260,7,"display","v. 전시하다, 나타내다 n. 전시"],[261,7,"policy","n. 정책, 수단, 방법"],[262,7,"mass","n. 많은 양, 덩어리, 집단, 대중"],[263,7,"committee","n. (상급 기관에 소속된) 위원회"],[264,7,"accurate","a. 정확한"],[265,7,"arrange","v. 정리하다, 준비하다, 각색하다"],[266,7,"facility","n. 시설, 편의, 재능"],[267,7,"consult","v. 상담하다, 참고하다"],[268,7,"refer","v. 언급하다, 위탁하다"],[269,7,"attach","v. 붙이다, 첨부하다, 소속시키다"],[270,7,"recover","v. 회복하다, 되찾다"],[271,7,"reward","n. 보상 v. 보답하다"],[272,7,"enormous","a. 엄청난, 거대한"],[273,7,"domestic","a. 국내의, 가정의"],[274,7,"wealth","n. 부(富), 재산"],[275,7,"elementary","a. 초보의, 기초적인"],[276,7,"gap","n. 격차, 틈"],[277,7,"except","p. ~을 제외하고는 v. 제외하다"],[278,7,"journey","n. 여행"],[279,7,"plain","a. 평범한, 명백한"],[280,7,"downtown","n. 도심 a. 도심의 ad. 도심지에"],[281,8,"previous","a. 앞의, 이전의"],[282,8,"produce","v. 생산하다, 제조하다"],[283,8,"remain","v. 여전히 ~이다, 남다"],[284,8,"break","v. 깨다, (기기 등을) 고장 내다"],[285,8,"slight","a. 약간의, 경미한"],[286,8,"include","v. 포함하다"],[287,8,"delay","v. 연기하다, 미루다 n. 지연"],[288,8,"file","n. 서류철 v. 파일에 철하다, (소송 등을) 제기하다"],[289,8,"ethic","n. 윤리"],[290,8,"instant","a. 즉각의, 즉석의 n. 순간"],[291,8,"reveal","v. 드러내다, 폭로하다"],[292,8,"breed","v. 낳다, 양육하다"],[293,8,"leisure","n. 여가, 자유 시간 a. 한가한"],[294,8,"urban","a. 도시의"],[295,8,"witness","n. 목격자, 증인 v. 목격하다"],[296,8,"admit","v. 인정하다, 입장을 허락하다"],[297,8,"muscle","n. 근육, 힘, 강제"],[298,8,"device","n. 장치, 고안, 방책"],[299,8,"suppose","v. 가정하다, 추측하다"],[300,8,"owe","v. 빚지고 있다, (명예·성공 등을) ~에 돌리다"],[301,8,"intend","v. ~할 작정이다, 의도하다"],[302,8,"aspect","n. 관점, 양상, 면"],[303,8,"potential","a. 잠재적인 n. 잠재력"],[304,8,"award","v. 수여하다 n. 상"],[305,8,"preserve","v. 보존하다, 보호하다"],[306,8,"spot","n. 지점, 얼룩 v. 발견하다, 얼룩지게 하다"],[307,8,"underground","a. 지하의, 비밀의 n. 지하"],[308,8,"consequence","n. 결과, 중요성"],[309,8,"target","n. 목표, 표적 v. 목표로 삼다"],[310,8,"unless","c. ~이 아닌 한, 만약 ~이 아니면"],[311,8,"accomplish","v. 이루다, 성취하다"],[312,8,"adopt","v. 채택하다, 입양하다"],[313,8,"unique","a. 독특한, 유일한"],[314,8,"slip","v. 미끄러지다, 실수하다 n. 종이 조각"],[315,8,"civilization","n. 문명"],[316,8,"row","n. 열, 줄 v. 배를 젓다"],[317,8,"horizon","n. 수평선, 지평선"],[318,8,"atmosphere","n. 대기, 분위기"],[319,8,"label","n. 꼬리표, 상표 v. 라벨을 붙이다"],[320,8,"decorate","v. 장식하다, ~에게 훈장을 주다"],[321,9,"identify","v. ~임을 확인하다, 식별하다, 동일시하다"],[322,9,"standard","n. 기준, 표준 a. 기준의, 표준의"],[323,9,"scale","n. 규모, 저울, 비늘"],[324,9,"evident","a. 명백한"],[325,9,"seldom","ad. 거의 ~ 않는"],[326,9,"secretary","n. 비서, 서기관, 장관"],[327,9,"basis","n. 기초, 원리"],[328,9,"automatic","a. 자동적인, 기계적인"],[329,9,"region","n. 지역"],[330,9,"rise","n. 상승 v. 오르다, 일어나다"],[331,9,"addict","v. 중독시키다 n. 중독자"],[332,9,"disappoint","v. 실망시키다"],[333,9,"artificial","a. 인공적인, 인조의"],[334,9,"possess","v. 소유하다, ~의 마음을 사로잡다"],[335,9,"substance","n. 물질, 본질, 실체"],[336,9,"realistic","a. 현실적인, 현실주의의"],[337,9,"encounter","v. (우연히) 만나다 n. 마주침"],[338,9,"differ","v. 다르다, 의견을 달리하다"],[339,9,"principle","n. 원칙, 원리"],[340,9,"memorize","v. 기억하다"],[341,9,"physics","n. 물리학"],[342,9,"evaluate","v. 평가하다"],[343,9,"tremendous","a. 굉장한, 무시무시한"],[344,9,"application","n. 적용, 신청"],[345,9,"vote","n. 투표 v. 투표하다"],[346,9,"spread","n. 퍼짐, 확산 v. 퍼지다, 펼치다"],[347,9,"impact","n. 충격, 영향 v. 충격[영향]을 주다"],[348,9,"cooperate","v. 협력하다"],[349,9,"emit","v. (빛·열·소리 등을) 방출하다"],[350,9,"request","n. 요청 v. 요청하다"],[351,9,"guarantee","v. 보증하다 n. 보증"],[352,9,"resist","v. 저항하다"],[353,9,"fulfill","v. 달성하다, 이행하다, 실현하다"],[354,9,"stink","v. 역겹다, 악취를 풍기다 n. 악취"],[355,9,"grant","v. 승인하다, 수여하다"],[356,9,"rely","v. 의지하다, 믿다"],[357,9,"permanent","a. 영원한, 영구적인"],[358,9,"emergency","n. 비상 사태"],[359,9,"rid","v. 제거하다"],[360,9,"theme","n. 주제, 화제, 논제"],[361,10,"hesitate","v. 주저하다, 망설이다"],[362,10,"location","n. 장소, 위치"],[363,10,"restrict","v. 제한하다, 한정하다"],[364,10,"organism","n. 유기체, 생물, 생명체"],[365,10,"resolve","v. 결심하다, 해결하다, 분해하다"],[366,10,"offer","v. 제공하다, 제안하다"],[367,10,"distribute","v. 분배하다, 분포시키다"],[368,10,"rainforest","n. (열대) 우림"],[369,10,"circumstance","n. 상황, 환경"],[370,10,"interpret","v. 해석하다, 통역하다"],[371,10,"suitable","a. 적절한, 적합한"],[372,10,"curve","n. 곡선(길), 속임수"],[373,10,"annoy","v. 괴롭히다, 귀찮게 하다"],[374,10,"frighten","v. 겁먹게 하다"],[375,10,"estimate","n. 견적, 평가 v. 평가하다"],[376,10,"refuse","v. 거절하다"],[377,10,"adventure","n. 모험 v. 위험에 빠뜨리다"],[378,10,"entrance","n. 입장, 입구, 입학"],[379,10,"persuade","v. 설득하다"],[380,10,"perceive","v. 인지하다, 인식하다"],[381,10,"recite","v. 암송하다"],[382,10,"gather","v. 모으다"],[383,10,"cabin","n. 오두막집, 객실, 선실"],[384,10,"gear","n. 장비, 기어 v. 맞게 조정하다"],[385,10,"ray","n. 광선"],[386,10,"release","v. 놓아주다, 방출하다, 발표하다 n. 석방, 발표"],[387,10,"rank","n. 등급, 지위 v. 매기다, (등급을) 차지하다"],[388,10,"symphony","n. 교향곡, (소리의) 조화"],[389,10,"envy","n. 부러움 v. 부러워하다"],[390,10,"corporate","a. 회사의, 법인의"],[391,10,"alternative","n. 대안 a. 대안의"],[392,10,"retire","v. 은퇴하다"],[393,10,"appeal","v. 호소하다, 항의하다, 관심을 끌다 n. 호소, 항의"],[394,10,"identical","a. 동일한, 일란성의"],[395,10,"investment","n. 투자"],[396,10,"autograph","n. 서명 v. 서명하다"],[397,10,"slave","n. 노예"],[398,10,"harm","n. 손해, 손상 v. 해치다"],[399,10,"authority","n. 권위, 당국"],[400,10,"innocence","n. 결백, 무죄, 순진"],[401,11,"receive","v. 받다"],[402,11,"infant","n. 유아 a. 유아의, 미발달의"],[403,11,"calculate","v. 계산하다"],[404,11,"charity","n. 자비, 자선 단체, 구호물자"],[405,11,"accept","v. 받아들이다, (설명·학설 등을) 인정하다"],[406,11,"depend","v. 의지하다"],[407,11,"whereas","c. ~인 반면에"],[408,11,"broad","a. 넓은, 광범위한, (빛 등이) 가득한"],[409,11,"treat","v. 여기다, 대우하다, 처리하다, 치료하다"],[410,11,"ignorant","a. 무식한, 모르는"],[411,11,"pure","a. 순수한"],[412,11,"extinct","a. 멸종된, 꺼진"],[413,11,"household","n. 가정 a. 가정[가족]의"],[414,11,"refund","n. 반환, 환불 v. 환불하다"],[415,11,"continue","v. 계속하다"],[416,11,"institute","n. 연구소, 협회 v. 설립하다, 제정하다"],[417,11,"lately","ad. 최근에"],[418,11,"ashamed","a. 부끄러워하는"],[419,11,"dense","a. 조밀한, 밀집한"],[420,11,"rescue","v. 구조하다 n. 구조"],[421,11,"destination","n. 목적지"],[422,11,"expand","v. 확장하다"],[423,11,"compete","v. 경쟁하다"],[424,11,"evolution","n. 진화"],[425,11,"hire","v. 고용하다"],[426,11,"genuine","a. 진짜의, 성실한"],[427,11,"status","n. 상태, 지위, 현상"],[428,11,"military","a. 군대의 n. 군대"],[429,11,"logic","n. 논리, 논리학"],[430,11,"gravity","n. 중력"],[431,11,"isolate","v. 고립시키다"],[432,11,"commit","v. (죄를) 저지르다, 전념[충실]하다, 맡기다"],[433,11,"sum","n. 총합, 합계"],[434,11,"conserve","v. 보존하다"],[435,11,"concept","n. 개념"],[436,11,"swing","v. 흔들(리)다, 진동하다 n. 그네"],[437,11,"sensible","a. 분별 있는, 현명한"],[438,11,"marriage","n. 결혼, 혼인"],[439,11,"reproduce","v. 재생하다, 복제하다, 번식하다"],[440,11,"tone","n. 어조(語調), 말투, 음, 색조"],[441,12,"cancel","v. 취소하다"],[442,12,"return","v. 돌아오다, 돌려주다 n. 귀환, 반납, 수익"],[443,12,"invitation","n. 초대, 초대장"],[444,12,"precise","a. 정확한"],[445,12,"formal","a. 공식적인, 정식의"],[446,12,"apparent","a. 분명한, 명백한"],[447,12,"departure","n. 출발"],[448,12,"visual","a. 시각의"],[449,12,"current","a. 현재의 n. 해류, 흐름"],[450,12,"agriculture","n. 농업"],[451,12,"leak","n. 새는 구멍 v. 새다, 누설하다"],[452,12,"portion","n. 일부, 부분 v. 분할하다"],[453,12,"trend","n. 추세, 경향"],[454,12,"particle","n. 입자, 극소량"],[455,12,"rite","n. (종교적) 의식, 의례"],[456,12,"distinct","a. 별개의, 뚜렷한"],[457,12,"component","n. 구성 요소 a. 구성하는"],[458,12,"poverty","n. 빈곤, 가난"],[459,12,"sculpture","n. 조각 v. 조각하다"],[460,12,"descend","v. 내려오다, 물려주다"],[461,12,"universal","a. 보편적인, 우주의"],[462,12,"surface","n. 표면, 수면, 지면"],[463,12,"eager","a. 갈망하는"],[464,12,"legal","a. 법률의, 합법의"],[465,12,"annual","a. 연례의, 1년의, 1년간의"],[466,12,"trap","n. 함정 v. 덫을 놓다, 막다"],[467,12,"demonstrate","v. 논증하다, 설명하다, 시위하다, 보여 주다"],[468,12,"companion","n. 동료, 동반자"],[469,12,"democracy","n. 민주주의, 민주주의 국가"],[470,12,"mature","a. 성숙한, 익은, 지불 만기의 v. 성숙해지다"],[471,12,"brilliant","a. 훌륭한, 명석한"],[472,12,"faith","n. 신념, 믿음"],[473,12,"aim","v. 겨냥하다 n. 조준"],[474,12,"spare","a. 여분의, 검소한 v. 용서하다, 남겨주다"],[475,12,"transfer","v. 이동하다, 옮기다, 갈아타다"],[476,12,"oppose","v. 반대하다"],[477,12,"desperate","a. 필사적인, 절망적인"],[478,12,"remote","a. 멀리 떨어진, 희박한, 드문"],[479,12,"offend","v. 기분을 상하게 하다, (범죄를) 저지르다"],[480,12,"awake","a. 깨어 있는 v. 깨우다, 깨다"],[481,13,"option","n. 선택, 선택권"],[482,13,"insight","n. 통찰, 통찰력"],[483,13,"achieve","v. (목적을) 달성하다, (명성을) 얻다"],[484,13,"civil","a. 시민의, 민간의"],[485,13,"pause","n. 중단 v. 중단하다, 잠시 멈추다"],[486,13,"prove","v. 입증하다, (~임이) 판명되다"],[487,13,"lecture","n. 강의 v. 강의를 하다"],[488,13,"minor","a. 사소한, 소수의 n. 미성년자, 부전공 v. 부전공하다"],[489,13,"duty","n. 의무, 관세"],[490,13,"vigor","n. 활력"],[491,13,"organize","v. 조직하다, 구성하다, 정리하다"],[492,13,"chief","a. 주요한, 우두머리의 n. 우두머리"],[493,13,"complicated","a. 복잡한"],[494,13,"digest","v. 소화하다, (완전히) 이해하다 n. 요약"],[495,13,"shortage","n. 부족, 결함"],[496,13,"laboratory","n. 실험실 a. 실험(실)의"],[497,13,"arrive","v. 도착하다"],[498,13,"generous","a. 관대한, 넉넉한"],[499,13,"laundry","n. 세탁물"],[500,13,"transform","v. 변형시키다, 변환하다"],[501,13,"discipline","n. 훈련, 규율, 징계 v. 훈련[단련]하다, 징계하다"],[502,13,"forbid","v. 금지하다"],[503,13,"ultimate","a. 궁극적인, 최후의"],[504,13,"thrive","v. 번영하다, 발전하다, 잘 되다"],[505,13,"conversation","n. 대화, 회담, 좌담"],[506,13,"bet","v. 돈을 걸다, 내기를 하다, (~이) 틀림없다 n. 내기"],[507,13,"royal","a. 왕족의, 왕의"],[508,13,"ruin","n. 파멸, 파산 v. 망치다, 파멸[파산]시키다"],[509,13,"worship","v. 예배하다, 숭배하다 n. 예배, 숭배"],[510,13,"evil","a. 사악한 n. 악"],[511,13,"scarce","a. 부족한, 드문"],[512,13,"afterward","ad. 나중에, 그 후에"],[513,13,"client","n. 고객, (변호사 등의) 의뢰인"],[514,13,"insure","v. 보험을 계약하다, 안전하게 하다"],[515,13,"fancy","n. 공상, (일시적인) 기호 v. 공상하다 a. 화려한"],[516,13,"surgery","n. 외과 수술"],[517,13,"assign","v. 할당하다, 지정하다"],[518,13,"regulate","v. 규제하다, 조절하다"],[519,13,"shelf","n. 선반"],[520,13,"utility","n. 유용(성), (수도·가스 등의) 공익사업"],[521,14,"necessity","n. 필수, 필수품, 필요"],[522,14,"yield","v. 생산하다, 양도하다, 굴복하다 n. 수확(물)"],[523,14,"decline","n. 감소, 쇠퇴 v. 감소하다, 쇠퇴하다, (정중히) 거절하다"],[524,14,"coincidence","n. 우연의 일치, 동시에 일어난 사건"],[525,14,"aside","ad. 한쪽으로, 제쳐 두고"],[526,14,"contemporary","a. 동시대의, 현대의"],[527,14,"bless","v. 축복하다, 감사하다"],[528,14,"explain","v. 설명하다"],[529,14,"prior","a. 이전의, 우선하는"],[530,14,"tolerate","v. 참다, 용인하다"],[531,14,"measure","v. 측정하다 n. 측정, 수단"],[532,14,"abstract","a. 추상적인 n. 추상, 개요"],[533,14,"cottage","n. 오두막집"],[534,14,"correct","a. 올바른, 정확한 v. 바로잡다, 정정하다"],[535,14,"confirm","v. 입증[확인]하다, (결심을) 굳게 하다"],[536,14,"imitate","v. 모방하다"],[537,14,"prey","n. 먹이, 희생자"],[538,14,"defeat","v. 패배시키다 n. 패배"],[539,14,"illustrate","v. 설명하다, 예증하다, 삽화를 넣다"],[540,14,"fuse","n. 퓨즈, 도화선 v. 융합하다"],[541,14,"pupil","n. 학생, 눈동자"],[542,14,"intellect","n. 지성"],[543,14,"spice","n. 향신료, 양념"],[544,14,"tempt","v. 유혹하다, (관심을) 끌다"],[545,14,"inspire","v. 영감을 주다, 고무시키다, 격려하다"],[546,14,"dine","a. 만찬을 대접하다, 식사하다"],[547,14,"literally","ad. 문자 그대로"],[548,14,"appropriate","a. 적절한"],[549,14,"resort","n. 휴양지, 의지 v. 의지하다, 자주 가다"],[550,14,"grab","v. 움켜쥐다 n. 움켜쥠"],[551,14,"propose","v. 제안하다, 청혼하다"],[552,14,"wreck","n. 난파선, 사고 v. 난파시키다"],[553,14,"document","n. 문서, 서류 v. 기록하다"],[554,14,"suspect","v. 의심하다 n. 용의자"],[555,14,"alien","n. 외국인, 외계인 a. 외국의, 이질적인"],[556,14,"prohibit","v. 금지하다"],[557,14,"install","v. 설치하다"],[558,14,"triumph","n. 승리 v. 승리하다"],[559,14,"scholarship","n. 학문, 장학금"],[560,14,"execute","v. 실행하다, 처형하다"],[561,15,"ensure","v. 확실하게 하다, 보증하다"],[562,15,"receipt","n. 영수증"],[563,15,"defect","n. 결점 v. (국가·당 등을) 버리다"],[564,15,"trait","n. 특성, 특징"],[565,15,"modest","a. 겸손한, 알맞은"],[566,15,"virtual","a. 가상의, 사실상의"],[567,15,"compare","v. 비교하다"],[568,15,"address","v. 연설하다 n. 연설, 인사말"],[569,15,"inner","a. 내부의"],[570,15,"contrary","a. 반대의, 불리한 n. 반대의 것"],[571,15,"split","v. 찢다, (세로로) 쪼개다 n. 틈, 분열"],[572,15,"supervise","v. 감독하다, 관리하다, 통제하다"],[573,15,"inhabit","v. 살다, 거주하다"],[574,15,"appear","v. 나타나다"],[575,15,"commute","n. 통근 v. 통근하다"],[576,15,"earthquake","n. 지진, (사회·정치적) 대변동"],[577,15,"enroll","v. 입학하다, 등록하다"],[578,15,"debate","n. 토론 v. 토론하다"],[579,15,"abandon","v. 버리다, 포기하다"],[580,15,"conquer","v. 정복하다, 극복하다"],[581,15,"nevertheless","ad. 그럼에도 불구하고"],[582,15,"seal","n. 도장, 봉인, 바다표범 v. 봉인하다"],[583,15,"greed","n. 탐욕"],[584,15,"contract","v. 계약하다, 수축하다 n. 계약서"],[585,15,"nutrition","n. 영양"],[586,15,"retail","n. 소매 v. 소매하다"],[587,15,"prejudice","n. 편견, 선입관"],[588,15,"register","v. 등록하다, 기재하다 n. 등록"],[589,15,"agency","n. 대리점"],[590,15,"nurture","v. 양육하다, 교육하다 n. 양육, 교육"],[591,15,"priest","n. 성직자"],[592,15,"elegant","a. 고상한, 우아한"],[593,15,"impose","v. 부과하다, 강요하다"],[594,15,"arise","v. 발생하다, 생겨나다"],[595,15,"modify","v. 변형하다, 수정하다"],[596,15,"masterpiece","n. 명작, 대작"],[597,15,"harsh","a. 거친, 가혹한"],[598,15,"drought","n. 가뭄"],[599,15,"criteria","n. (pl.) 기준, 표준"],[600,15,"extraordinary","a. 비범한, 놀라운"],[601,16,"general","a. 일반적인 n. (육군·공군·해병대) 대장"],[602,16,"spill","v. 엎지르다, 흘리다 n. 엎질러짐, 유출"],[603,16,"usual","a. 보통의, 통상의"],[604,16,"routine","n. 일상적인 일, 일과 a. 일상적인"],[605,16,"eliminate","v. 제거하다, 삭제하다"],[606,16,"deny","v. 부인하다, 거절하다"],[607,16,"scream","v. 절규하다, 비명 지르다, 소리치다 n. 비명, 절규"],[608,16,"sensitive","a. 민감한, 예민한, 세심한"],[609,16,"swallow","v. 삼키다 n. 삼킴, 제비"],[610,16,"glare","v. (눈부시게) 빛나다, 노려보다 n. 눈부신 빛, 노려봄"],[611,16,"tragic","a. 비극의, 비참한"],[612,16,"deprive","v. 박탈하다"],[613,16,"conscious","a. 의식하고 있는, 의도적인"],[614,16,"interfere","v. 방해하다, 간섭하다"],[615,16,"temporary","a. 일시적인, 임시의"],[616,16,"council","n. 협의회, 회의"],[617,16,"adolescent","n. 청소년 a. 청소년기의"],[618,16,"associate","v. 연관짓다, 교제하다 n. 동료"],[619,16,"arctic","a. 북극의"],[620,16,"capture","v. 붙잡다, 포획하다 n. 포획"],[621,16,"dilute","a. 묽은 v. 희석시키다"],[622,16,"figure","v. 생각[판단]하다, 계산하다 n. 수치, 계산, 형체"],[623,16,"dim","a. 흐릿한, 어두운 v. (불빛이) 흐려지다"],[624,16,"warehouse","n. 창고"],[625,16,"crew","n. 승무원"],[626,16,"barrier","n. 장벽, 장애물"],[627,16,"tradition","n. 전통, 관습"],[628,16,"pedestrian","n. 보행자 a. 보행자의"],[629,16,"glance","v. 흘긋 보다 n. 흘긋 봄"],[630,16,"irritate","v. 짜증나게 하다, 화나게 하다"],[631,16,"cruel","a. 잔인한, 고통을 주는"],[632,16,"fold","v. 접다, 포개다 n. 주름, (동물의) 우리"],[633,16,"trial","n. 재판, 실험, 시도"],[634,16,"tribe","n. 부족, 종족"],[635,16,"profound","a. 깊은, 심오한"],[636,16,"distinguish","v. 구별하다, 식별하다"],[637,16,"errand","n. 심부름, 잡일"],[638,16,"welfare","n. 복지"],[639,16,"statement","n. 진술, 성명서"],[640,16,"prevail","v. 우세하다, 만연하다"],[641,17,"widespread","a. 널리 퍼진"],[642,17,"result","n. 결과 v. (결과로서) 생기다"],[643,17,"fade","v. 사라지다, 희미해지다"],[644,17,"progress","v. 진보하다, 전진하다 n. 진전, 진보"],[645,17,"weapon","n. 무기, 병기"],[646,17,"drastic","a. 격렬한, 과감한"],[647,17,"reinforcement","n. 강화, 보강"],[648,17,"wonder","v. 궁금해하다, 놀라다 n. 경탄, 경이"],[649,17,"pile","n. 쌓아 올린 더미, 많은 양 v. 쌓아 올리다"],[650,17,"protect","v. 보호하다"],[651,17,"infection","n. 감염, 전염(병)"],[652,17,"stiffen","v. 굳어지다"],[653,17,"endanger","v. 위험에 빠뜨리다"],[654,17,"adjust","v. 조절하다, 조정하다"],[655,17,"peer","n. 동료, 또래"],[656,17,"renew","v. 새롭게 하다, 갱신하다"],[657,17,"germ","n. 미생물, 세균"],[658,17,"atom","n. 원자"],[659,17,"realize","v. 깨닫다, 실현하다"],[660,17,"enrich","v. 풍성하게 하다, 부유하게 하다"],[661,17,"noble","a. 귀족의, 고결한"],[662,17,"repair","v. 수선[수리]하다, (건강 등을) 회복하다 n. 수선[수리]"],[663,17,"candidate","n. 후보자"],[664,17,"ideal","a. 이상적인 n. 이상"],[665,17,"crop","n. 작물, 수확"],[666,17,"ethnic","a. 인종의, 민족의"],[667,17,"foretell","v. 예언하다, 예고하다"],[668,17,"wholesale","n. 도매 a. 도매의"],[669,17,"debt","n. 빚, 부채"],[670,17,"representative","n. 대표, 국회의원(R-) a. 대표하는"],[671,17,"shift","n. 변화, 이동, 교대 v. 바꾸다, 이동하다"],[672,17,"excess","n. 초과, 초과량, 과도함 a. 초과한, 여분의"],[673,17,"strict","a. 엄한, 엄격한"],[674,17,"appliance","n. (가정용) 기구, 장치"],[675,17,"furthermore","ad. 게다가, 더욱이"],[676,17,"command","n. 명령, 지배력 v. 명령하다, 지휘하다"],[677,17,"ecosystem","n. 생태계"],[678,17,"fame","n. 명성"],[679,17,"oral","a. 구두(口頭)의, 구술의"],[680,17,"drift","n. 표류 v. 표류하다"],[681,18,"avoid","v. 피하다"],[682,18,"outstanding","a. 뛰어난, 두드러진, 미해결의"],[683,18,"mislead","v. 잘못 인도하다, 오해하게 하다"],[684,18,"dedicate","v. 헌납하다, 바치다"],[685,18,"initial","a. 처음의, 초기의 n. 머리글자(이니셜)"],[686,18,"sink","v. 가라앉다"],[687,18,"entire","a. 전체의, 완전한 n. 전부, 전체"],[688,18,"confront","v. 직면하다"],[689,18,"beard","n. 턱수염"],[690,18,"haste","n. 급함, 서두름"],[691,18,"crush","v. 으깨다, 밀어 넣다"],[692,18,"destiny","n. 운명"],[693,18,"hardship","n. 고난, 어려움"],[694,18,"escape","v. 탈출하다, 벗어나다 n. 탈출, 도망"],[695,18,"valid","a. 타당한, 유효한"],[696,18,"dispose","v. 배치하다, 처리하다, 경향을 갖게 하다"],[697,18,"exist","v. 존재하다, 살아가다"],[698,18,"optimal","a. 최상의, 최적의"],[699,18,"hydrogen","n. 수소"],[700,18,"perspective","n. 관점, 견해, 원근법, 전망"],[701,18,"thread","n. 실 v. 실을 꿰다"],[702,18,"dynasty","n. 왕조, 왕가"],[703,18,"scatter","v. 흩뿌리다, 분산시키다"],[704,18,"gamble","v. 도박하다, 모험하다 n. 도박, 모험"],[705,18,"temper","n. 성질, 기질 v. 완화시키다"],[706,18,"undoubtedly","ad. 의심할 여지없이, 확실히"],[707,18,"raft","n. 뗏목, 고무보트"],[708,18,"minimal","a. 최소의, 아주 적은"],[709,18,"soak","v. 적시다, 젖다, 흡수하다"],[710,18,"craft","n. (수)공예, 기술, 선박, 비행기"],[711,18,"cease","v. 그만두다, 중지하다"],[712,18,"review","n. 재검토, 논평 v. 재검토하다"],[713,18,"ceiling","n. 천장, 상한선"],[714,18,"unify","v. 통합하다, 통일하다"],[715,18,"combat","v. 싸우다 n. 전투"],[716,18,"bump","v. 부딪치다 n. 충돌, 혹"],[717,18,"primary","a. 주요한, 최초[초기]의"],[718,18,"genre","n. 장르, 유형, 형식"],[719,18,"erase","v. 지우다, 없애다"],[720,18,"doom","v. ~할 운명이다 n. 운명, 비운, 파멸"],[721,19,"vital","a. 필수적인, 중요한, 생명 유지와 관련된"],[722,19,"incident","n. 일어난 일, 사건 a. 일어나기 쉬운"],[723,19,"session","n. 시간, 기간, 회의, (대학의) 학기"],[724,19,"obvious","a. 명백한, 분명한"],[725,19,"moderate","a. 온건한, 적당한"],[726,19,"budget","n. 예산, 예산안"],[727,19,"graze","v. 풀을 뜯다, 방목하다"],[728,19,"fragile","a. 부서지기 쉬운"],[729,19,"myth","n. 신화, 사회적 통념"],[730,19,"fur","n. 부드러운 털, 모피"],[731,19,"indifferent","a. 무관심한"],[732,19,"strain","v. 긴장시키다, 잡아당기다 n. 긴장, 압박"],[733,19,"ingredient","n. 재료, 성분"],[734,19,"dismiss","v. 해고하다, 해산시키다, 묵살하다"],[735,19,"geometry","n. 기하학"],[736,19,"glacier","n. 빙하"],[737,19,"urge","v. 촉구하다, 강요하다"],[738,19,"celebrity","n. 명성, 유명 인사"],[739,19,"antique","a. 옛날의, 고대의, 고풍의 n. 골동품"],[740,19,"profit","n. 이익, 이윤 v. 이익을 얻다"],[741,19,"sphere","n. 구체(球體), 구"],[742,19,"inherit","v. 상속하다, (유전으로) 물려받다"],[743,19,"disgrace","n. 불명예, 수치"],[744,19,"crawl","v. 기어가다, 서행하다 n. 기어가기, 서행"],[745,19,"scratch","v. 긁다, 할퀴다 n. 긁힌 자국, 찰과상"],[746,19,"diabetes","n. 당뇨병"],[747,19,"congestion","n. 밀집, 혼잡"],[748,19,"constitute","v. 구성하다, 제정하다, 설립하다"],[749,19,"flow","v. 흐르다 n. 흐름"],[750,19,"investigate","v. 조사하다, 수사하다"],[751,19,"barter","v. 물물 교환하다 n. 물물 교환, 교역품"],[752,19,"circular","a. 원의, 순환의"],[753,19,"chilly","a. 쌀쌀한, 냉담한"],[754,19,"ancestor","n. 조상, 선조"],[755,19,"fierce","a. 사나운, 맹렬한"],[756,19,"vague","a. 막연한, 모호한, 흐릿한"],[757,19,"rough","a. 거친, 난폭한, 대강의"],[758,19,"content","a. 만족하는 n. 내용(물), 목차"],[759,19,"obstacle","n. 장애물, 방해가 되는 것"],[760,19,"editorial","n. 사설, 논설 a. 편집자의"],[761,20,"abolish","v. 폐지하다"],[762,20,"assure","v. 보증하다, 확실하게 하다"],[763,20,"form","n. 형태, 종류 v. 형성하다"],[764,20,"gender","n. 성(性), 성별"],[765,20,"innovation","n. 혁신"],[766,20,"opponent","n. 반대자, 상대 a. 반대하는"],[767,20,"present","a. 현재의 n. 현재, 선물 v. 제출하다, 나타내다"],[768,20,"fertile","a. 비옥한, 기름진"],[769,20,"emperor","n. 황제"],[770,20,"dwell","v. 살다, 거주하다"],[771,20,"chore","n. 집안일, 허드렛일"],[772,20,"rehearsal","n. 리허설, 예행연습"],[773,20,"fossil","n. 화석"],[774,20,"glitter","v. 반짝이다 n. 반짝임"],[775,20,"carve","v. 조각하다, 새기다"],[776,20,"decay","v. 부패하다, 쇠퇴하다 n. 부패, 쇠퇴"],[777,20,"protein","n. 단백질"],[778,20,"backward","ad. 후방에, 뒤쪽으로, 거꾸로"],[779,20,"translate","v. 번역하다, 옮기다"],[780,20,"refresh","v. 상쾌하게 하다, 새롭게 하다"],[781,20,"tissue","n. (생물의 근육·신경 등의) 조직"],[782,20,"lord","n. 군주"],[783,20,"substitute","n. 대리자, 대체물 v. 대체하다"],[784,20,"scan","v. 정밀 검사하다, 유심히 쳐다보다"],[785,20,"pottery","n. 도자기, 도예"],[786,20,"layer","n. 층, 겹"],[787,20,"property","n. 재산, 소유물, 부동산"],[788,20,"justify","v. 정당화하다"],[789,20,"polish","v. 닦다, 윤을 내다, (문장 등을) 다듬다"],[790,20,"flavor","n. 맛 v. 맛을 내다"],[791,20,"imprint","v. (도장 등을) 찍다, 감명시키다 n. 찍은 자국"],[792,20,"heritage","n. 유산, 세습 재산"],[793,20,"strive","v. 노력하다, 애쓰다, 투쟁하다"],[794,20,"radiant","a. 빛나는, 아주 밝은"],[795,20,"exclaim","v. (감탄하며) 외치다"],[796,20,"asset","n. 자산, 재산"],[797,20,"portray","v. 묘사하다, 설명하다, 초상을 그리다"],[798,20,"administer","v. 관리[운영]하다, 집행하다, 주다"],[799,20,"wage","n. 급료"],[800,20,"subscribe","v. 정기 구독하다"],[801,21,"merit","n. 장점, 공로 v. ~을 받을 만하다"],[802,21,"launch","v. (로켓 등을) 발사하다, (새로운 일을) 시작하다 n. 발사, 개시"],[803,21,"conference","n. 회담, 회의"],[804,21,"accuse","v. 고발하다, 비난하다"],[805,21,"enhance","v. 향상시키다"],[806,21,"intimate","a. 친밀한"],[807,21,"reception","n. 환영회, 접수"],[808,21,"overwhelm","v. 압도하다, 당황하게 하다"],[809,21,"apply","v. 적용하다"],[810,21,"majesty","n. 위엄, 장엄, 왕(M-)"],[811,21,"shrug","v. (어깨를) 으쓱하다"],[812,21,"vicious","a. 사악한, 악의 있는"],[813,21,"cherish","v. 소중히 하다"],[814,21,"eternal","a. 영원한"],[815,21,"shrink","v. 축소하다, 수축하다"],[816,21,"colleague","n. 동료"],[817,21,"transmit","v. 전달하다"],[818,21,"discard","v. 버리다, 처분하다"],[819,21,"copper","n. 구리 a. 구리의, 구릿빛의"],[820,21,"orbit","n. 궤도 v. 궤도를 그리며 돌다"],[821,21,"famine","n. 굶주림, 기아"],[822,21,"pill","n. 알약"],[823,21,"immune","a. 면역성의, 면제된"],[824,21,"raw","a. 날것의, 가공하지 않은"],[825,21,"superior","a. 우월한 n. 상사"],[826,21,"string","n. 끈, 줄, 일련"],[827,21,"cope","v. 대처하다, 잘 처리하다"],[828,21,"loan","n. 대출, 대출금 v. 대출하다"],[829,21,"obedient","a. 순종하는, 유순한"],[830,21,"procedure","n. 절차, 과정"],[831,21,"bond","n. 결속, 속박, 계약, 채권"],[832,21,"angle","n. 각도, 모서리"],[833,21,"subtle","a. 미묘한, 교묘한"],[834,21,"depict","v. 묘사하다, 그리다"],[835,21,"radical","a. 과격한, 급진적인, 근본적인 n. 급진주의자"],[836,21,"caution","n. 조심, 주의 v. 주의를 주다"],[837,21,"persist","v. 고집하다, 지속하다"],[838,21,"reverse","n. 역(逆), 반대 a. 역의, 반대의 v. 뒤바꾸다"],[839,21,"cattle","n. (집합적) 소"],[840,21,"therapy","n. 치료, 요법"],[841,22,"experience","n. 경험, 체험 v. 경험하다"],[842,22,"strategy","n. 전략"],[843,22,"attract","v. (주의·흥미 등을) 끌다"],[844,22,"hence","ad. 그러므로, 지금부터"],[845,22,"architecture","n. 건축, 건축물"],[846,22,"territory","n. 영토, 영역"],[847,22,"wilderness","n. 황무지, 황야"],[848,22,"category","n. 범주"],[849,22,"funeral","n. 장례식 a. 장례의"],[850,22,"prefer","v. 선호하다"],[851,22,"outcome","n. 결과"],[852,22,"humiliation","n. 창피함, 굴욕"],[853,22,"ban","v. 금지하다 n. 금지"],[854,22,"flush","v. (얼굴이) 붉어지다, 물이 쏟아져 나오다"],[855,22,"omit","v. 생략하다, 빼다"],[856,22,"despair","n. 절망 v. 절망하다"],[857,22,"alert","a. 기민한, 경계하는 n. 경계 (태세) v. 경고하다"],[858,22,"compact","a. 소형의, 조밀한 v. 꽉 채우다"],[859,22,"likewise","ad. 마찬가지로, 게다가"],[860,22,"astonish","v. 놀라게 하다"],[861,22,"panic","n. 갑작스런 공포, 공황 a. 공황적인"],[862,22,"optimistic","a. 낙관적인, 낙천적인"],[863,22,"murder","n. 살인 v. 살인하다"],[864,22,"fundamental","a. 근본적인, 기본적인 n. 근본"],[865,22,"loyal","a. 충성스러운, 성실한"],[866,22,"humid","a. (날씨가) 습기 있는, 눅눅한"],[867,22,"pretend","v. ~인 척하다, 주장하다"],[868,22,"graduate","v. 졸업하다 n. 졸업생, 대학원 학생"],[869,22,"delicate","a. 섬세한"],[870,22,"inflate","v. 부풀리다, 과장하다, (물가 등을) 인상하다"],[871,22,"adequate","a. 적당한"],[872,22,"physician","n. 의사, 내과 의사"],[873,22,"joint","a. 공동의, 연합의 n. 이음매, 관절"],[874,22,"via","p. ~을 거쳐서[경유해서], ~에 의하여"],[875,22,"passage","n. 통로, 통과, (인용문의) 한 절"],[876,22,"vessel","n. (물건을 담는) 용기, 배, 선박, 혈관"],[877,22,"restore","v. 회복하다, 복구하다, 돌려주다"],[878,22,"passive","a. 수동적인, 수동형의"],[879,22,"marble","n. 대리석, 구슬 a. 대리석의"],[880,22,"classify","v. 분류하다"],[881,23,"prepare","v. 준비하다"],[882,23,"transaction","n. 거래, 처리"],[883,23,"sufficient","a. 충분한"],[884,23,"stable","a. 안정된 n. 마구간"],[885,23,"concern","v. 관련되다, 걱정하게 하다 n. 걱정, 관심사"],[886,23,"sympathy","n. 동정, 공감"],[887,23,"principal","a. 주요한, 제1의 n. (단체의) 장, 주역"],[888,23,"by-product","n. 부산물"],[889,23,"anxiety","n. 걱정, 불안, 열망"],[890,23,"edible","a. 먹을 수 있는, 식용의"],[891,23,"federal","a. 연방의, 연합의"],[892,23,"suffer","v. 고통 받다, 겪다"],[893,23,"trivial","a. 사소한"],[894,23,"tablet","n. (의학) 정제, 알약, (평평한) 판"],[895,23,"trade","v. 교환하다 n. 무역"],[896,23,"liquid","n. 액체 a. 액체의"],[897,23,"contend","v. 싸우다, 주장하다, 경쟁하다"],[898,23,"anticipate","v. 예상하다, 기대하다"],[899,23,"outlook","n. 전망, 조망"],[900,23,"desert","n. 사막 a. 사막의, 불모의 v. 버리다, 도주하다"],[901,23,"infinite","a. 무한한"],[902,23,"roam","v. 배회하다, 돌아다니다"],[903,23,"decent","a. 제대로 된, 품위 있는"],[904,23,"behalf","n. 이익, 자기편"],[905,23,"distortion","n. 왜곡, 찌그러뜨림"],[906,23,"bud","n. 싹 v. 싹트다"],[907,23,"symbolic","a. 상징적인"],[908,23,"municipal","a. 지방(자치제)의, 시의"],[909,23,"phenomenon","n. 현상, 사건, 비범한 인물"],[910,23,"devote","v. (노력·시간 등을) 바치다"],[911,23,"peasant","n. 농민, 소작농"],[912,23,"diminish","v. 감소하다"],[913,23,"jealous","a. 질투하는"],[914,23,"exclude","v. 배제하다, 제외하다"],[915,23,"flexible","a. 융통성 있는, 유연한"],[916,23,"tenant","n. 세입자, 주민"],[917,23,"worthwhile","a. ~할 가치가 있는"],[918,23,"pavement","n. 보도, 포장도로"],[919,23,"nominate","v. (후보자로) 지명[추천]하다, 임명하다"],[920,23,"sacred","a. 신성한, 성스러운"],[921,24,"support","v. 지지하다, 받치다, 부양하다 n. 지지, 지탱함, 부양"],[922,24,"revise","v. 개정하다"],[923,24,"suggest","v. 제안하다, 암시하다"],[924,24,"control","v. 지배하다, 제어하다 n. 지배, 제어"],[925,24,"mammal","n. 포유동물"],[926,24,"internal","a. 내부의"],[927,24,"resent","v. 분개하다, 화를 내다"],[928,24,"abrupt","a. 갑작스러운"],[929,24,"diverse","a. 다른, 다양한"],[930,24,"refine","v. 정제하다, 개선하다"],[931,24,"dynamic","a. 동적인, 역학의"],[932,24,"nerve","n. 신경"],[933,24,"prompt","a. 즉각적인, 신속한 v. 촉구하다, 자극하다"],[934,24,"suspend","v. 매달다, 중지하다"],[935,24,"industry","n. 산업, 공업"],[936,24,"iceberg","n. 빙산"],[937,24,"monetary","a. 화폐의"],[938,24,"superb","a. 최고의, 훌륭한"],[939,24,"gloom","n. 어둠, 우울"],[940,24,"distraction","n. 주의 산만, (정신을) 산만하게 하는 것"],[941,24,"collapse","v. 무너지다, 붕괴하다 n. 붕괴"],[942,24,"trigger","v. 촉발하다, 유발하다 n. 방아쇠, 계기"],[943,24,"martial","a. 전쟁의, 군대의"],[944,24,"monologue","n. 독백"],[945,24,"deliberate","a. 의도적인, 신중한 v. 숙고하다"],[946,24,"plot","n. 줄거리, 음모 v. 음모를 꾸미다"],[947,24,"rod","n. 막대기, 회초리"],[948,24,"partial","a. 부분적인"],[949,24,"mutual","a. 서로의, 공통의"],[950,24,"priceless","a. 대단히 귀중한"],[951,24,"fate","n. 운명"],[952,24,"pursue","v. 추구하다, 쫓다"],[953,24,"Atlantic","n. 대서양 a. 대서양의"],[954,24,"weird","a. 이상한, 기묘한"],[955,24,"booth","n. 칸막이한 공간, 부스, 노점"],[956,24,"prescribe","v. 규정하다, (약을) 처방하다"],[957,24,"erupt","v. 분출하다, 폭발하다"],[958,24,"insult","v. 모욕하다 n. 모욕"],[959,24,"gaze","v. 뚫어지게 보다, 응시하다"],[960,24,"supreme","a. 최고의"],[961,25,"context","n. 전후 관계, 맥락, 문맥"],[962,25,"complete","a. 완전한, 완벽한, 완료된 v. 완료하다"],[963,25,"race","v. 경주[경쟁]하다, 질주하다 n. 경주, 경쟁, 인종"],[964,25,"dominate","v. 지배하다"],[965,25,"vehicle","n. 탈것, 운송 수단"],[966,25,"complain","v. 불평하다, 항의하다"],[967,25,"brochure","n. 소책자, 브로셔"],[968,25,"force","n. 힘, 영향력 v. 강요하다"],[969,25,"nest","n. 둥지, 보금자리 v. 둥지를 틀다"],[970,25,"gain","v. 얻다 n. 이익"],[971,25,"curriculum","n. 교육 과정, 커리큘럼"],[972,25,"sew","v. 꿰매다, 바느질하다"],[973,25,"masculine","a. 남자의, 남자다운"],[974,25,"frown","v. 눈살을 찌푸리다 n. 찡그린 얼굴"],[975,25,"astound","v. 놀라게 하다"],[976,25,"dictator","n. 독재자, 구술하는 사람"],[977,25,"assessment","n. 평가, 판단"],[978,25,"crucial","a. 중대한, 결정적인"],[979,25,"paralysis","n. 마비"],[980,25,"deck","n. 갑판"],[981,25,"cheer","n. 환호, 갈채 v. 환호[성원]하다"],[982,25,"miserable","a. 비참한, 불쌍한"],[983,25,"tease","v. 괴롭히다, 약올리다"],[984,25,"aggressive","a. 공격적인, 적극적인"],[985,25,"cure","v. 치료하다, 해결하다 n. 치유, 회복"],[986,25,"attribute","v. ~의 결과로 여기다 n. 속성"],[987,25,"foster","v. 육성하다, 촉진시키다 a. 수양의, 위탁의"],[988,25,"psychologist","n. 심리학자"],[989,25,"postpone","v. 연기하다, 뒤로 미루다"],[990,25,"rob","v. 훔치다, 강탈하다"],[991,25,"abuse","n. 남용, 욕설, 학대 v. 남용하다, 학대하다"],[992,25,"unemployed","a. 실업의, 실직한"],[993,25,"breakdown","n. 고장, 쇠약"],[994,25,"disguise","v. 변장하다, 숨기다 n. 변장, 은폐"],[995,25,"blueprint","n. 청사진"],[996,25,"rear","n. 뒤 a. 뒤의, 후방의 v. 기르다"],[997,25,"output","n. 생산(량), 산출(량)"],[998,25,"sermon","n. 설교"],[999,25,"sprout","v. 싹이 트다, 자라나다 n. 싹"],[1000,25,"tin","n. 양철, 주석"],[1001,26,"reform","n. 개혁 v. 개혁하다"],[1002,26,"deal","v. 다루다, 대처하다 n. 거래"],[1003,26,"recruit","v. 모집하다, 징집하다 n. 신병, 신입 사원"],[1004,26,"maintain","v. 유지하다, 지지하다"],[1005,26,"workshop","n. 워크숍, 작업장, 연구 집회"],[1006,26,"patient","n. 환자 a. 인내심 있는"],[1007,26,"convention","n. 집회, 총회, 관습"],[1008,26,"devastate","v. 황폐시키다"],[1009,26,"reap","v. 수확하다"],[1010,26,"overlook","v. 간과하다, 너그럽게 봐주다, 내려다보다"],[1011,26,"deliver","v. 배달하다, 전달하다"],[1012,26,"reject","v. 거부하다, 거절하다"],[1013,26,"nourish","v. 영양분을 주다, 기르다"],[1014,26,"bay","n. 만(灣)"],[1015,26,"stun","v. 놀라게 하다, 기절시키다"],[1016,26,"particular","a. 특정한, 개개의 n. 사항, 상세"],[1017,26,"bulletin","n. 게시, 게시물"],[1018,26,"fluid","n. 유동체 (액체·기체의 총칭) a. 유동체의"],[1019,26,"affair","n. 사건, 일"],[1020,26,"dawn","n. 새벽 v. 이해되기 시작하다, 날이 새다"],[1021,26,"hostile","a. 적대적인"],[1022,26,"characteristic","n. 특징, 특색 a. 독특한, 특징적인"],[1023,26,"respect","v. 존중하다 n. 존경, 관련"],[1024,26,"await","v. 기다리다"],[1025,26,"concrete","a. 구체적인 n. 콘크리트"],[1026,26,"lease","n. 임대 v. 임대하다"],[1027,26,"racial","a. 인종의"],[1028,26,"variable","n. 변수 a. 변하기 쉬운, 변덕스러운"],[1029,26,"satisfy","v. 만족시키다, 충족시키다"],[1030,26,"rule","n. 지배, 규칙 v. 지배하다, 통치하다"],[1031,26,"perseverance","n. 인내심"],[1032,26,"fatal","a. 치명적인"],[1033,26,"remove","v. 제거하다"],[1034,26,"invert","v. 거꾸로 하다"],[1035,26,"tension","n. 긴장, 불안 v. 긴장시키다"],[1036,26,"reign","n. 통치 v. 통치하다"],[1037,26,"crack","n. 갈라진 틈 v. 금 가다"],[1038,26,"startle","v. 깜짝 놀라게 하다"],[1039,26,"discourage","v. 낙담시키다, 단념시키다"],[1040,26,"compensate","v. 보상하다"],[1041,27,"convert","v. 전환하다, 바꾸다"],[1042,27,"strike","v. 치다, (머릿속에) 떠오르다"],[1043,27,"suppress","v. 억압하다, 참다"],[1044,27,"core","n. 핵심 a. 핵심의"],[1045,27,"contribute","v. 공헌하다"],[1046,27,"spear","n. 창"],[1047,27,"renowned","a. 유명한, 명성 있는"],[1048,27,"era","n. 시대"],[1049,27,"withdraw","v. 철수시키다, 철회하다, (돈을) 인출하다"],[1050,27,"immigrate","v. (타국에서) 이주하다"],[1051,27,"dignity","n. 존엄"],[1052,27,"notify","v. 통지하다, 알리다"],[1053,27,"animate","v. 생기 있게 하다, 고무하다 a. 살아 있는"],[1054,27,"prevent","v. 막다, 예방하다"],[1055,27,"bilingual","a. 2개 국어의"],[1056,27,"mischief","n. 장난, 해악"],[1057,27,"discriminate","v. 구별하다, 차별하다"],[1058,27,"exemplify","v. 예시하다, ~의 좋은 예가 되다"],[1059,27,"adhere","v. 고수하다, 충실하다, 집착하다"],[1060,27,"judge","v. 판단하다 n. 재판관"],[1061,27,"peculiar","a. 독특한"],[1062,27,"sake","n. 위함, 목적"],[1063,27,"choke","v. 질식시키다, 숨이 막히다"],[1064,27,"folktale","n. 민간 설화, 전설"],[1065,27,"simultaneously","ad. 동시에"],[1066,27,"range","n. 범위 v. 정렬시키다"],[1067,27,"groom","n. 신랑"],[1068,27,"supernatural","a. 초자연적인"],[1069,27,"tender","a. 부드러운 v. 입찰하다 n. 입찰"],[1070,27,"instinct","n. 본능"],[1071,27,"gigantic","a. 거대한"],[1072,27,"meditate","v. 명상하다"],[1073,27,"mow","v. (풀을) 베다"],[1074,27,"evolve","v. 진화하다, 발전하다"],[1075,27,"chase","v. 쫓다, 추적하다"],[1076,27,"afflict","v. 괴롭히다"],[1077,27,"literate","a. 읽고 쓸 수 있는"],[1078,27,"coherent","a. 통일성 있는, 조리 있는"],[1079,27,"intolerable","a. 참을 수 없는"],[1080,27,"fountain","n. 분수, 근원"],[1081,28,"bold","a. 대담한, 선이 굵은"],[1082,28,"compliment","n. 칭찬 v. 칭찬하다"],[1083,28,"summit","n. 꼭대기, 정상"],[1084,28,"troop","n. 무리, 떼, 군대, 군사"],[1085,28,"alter","v. 바꾸다, 변경하다"],[1086,28,"conceive","v. 생각해 내다, ~을 마음에 그리다"],[1087,28,"durability","n. 내구성"],[1088,28,"destroy","v. 파괴하다"],[1089,28,"shallow","a. 얕은, 얇은, 피상적인, 천박한"],[1090,28,"face","v. 직면하다 n. 얼굴, 표면"],[1091,28,"promote","v. 증진하다, 승진시키다"],[1092,28,"weep","v. 울다"],[1093,28,"grasp","v. 붙잡다, 이해하다 n. 꽉 쥐기, 이해"],[1094,28,"overall","a. 전반적인, 전체의 n. 작업복"],[1095,28,"superstition","n. 미신"],[1096,28,"colony","n. 식민지, 공동체, 군생"],[1097,28,"absurd","a. 불합리한, 우스꽝스러운"],[1098,28,"dormitory","n. 기숙사"],[1099,28,"conduct","v. 수행하다, 실시하다 n. 행위, 안내"],[1100,28,"prone","a. ~하는 경향이 있는"],[1101,28,"conceal","v. 숨기다"],[1102,28,"retreat","v. 후퇴하다, 물러서다 n. 퇴각, 후퇴"],[1103,28,"compulsive","a. 강제적인, 강박의"],[1104,28,"clinic","n. 전문 병원, 개인 병원"],[1105,28,"banner","n. 깃발, 현수막"],[1106,28,"formula","v. 만들어 내다, 공식화하다"],[1107,28,"vow","n. 맹세 v. 맹세하다"],[1108,28,"malnutrition","n. 영양실조"],[1109,28,"relate","v. 관련시키다, 관련이 있다"],[1110,28,"undergo","v. 겪다"],[1111,28,"boast","v. 자랑하다, 떠벌리다"],[1112,28,"neutral","a. 중립의, 공평한"],[1113,28,"stain","n. 얼룩 v. 얼룩지게 하다"],[1114,28,"incentive","n. 자극, 장려책, 동기 a. 격려하는"],[1115,28,"float","v. 뜨다, 떠다니다 n. 부유물"],[1116,28,"tendency","n. 경향, 추세"],[1117,28,"applause","n. 박수갈채"],[1118,28,"wrestle","v. 싸우다, (일과) 씨름하다, 레슬링하다"],[1119,28,"sensation","n. 감각, 느낌, 대사건 (센세이션)"],[1120,28,"Confucian","a. 공자의, 유교의"],[1121,29,"draft","n. 원고, 초안 v. 초안을 그리다"],[1122,29,"crude","a. 가공하지 않은, 조잡한"],[1123,29,"supplement","n. 보충 v. 보충하다"],[1124,29,"velocity","n. 속도"],[1125,29,"tame","v. 길들이다 a. 길들여진"],[1126,29,"molecule","n. 분자"],[1127,29,"manage","v. ~을 잘 해내다, 다루다"],[1128,29,"dismay","v. 실망시키다, 낙담시키다 n. 걱정, 실망"],[1129,29,"diagnose","v. 진단하다"],[1130,29,"adapt","v. 적응하다, 적응시키다"],[1131,29,"reservoir","n. 저장소, 저수지"],[1132,29,"conform","v. 순응하다, 일치하다"],[1133,29,"spacious","a. 넓은, 훤히 트인"],[1134,29,"weave","v. 엮다, 짜다"],[1135,29,"boundary","n. 경계, 경계선"],[1136,29,"motive","n. 동기 (행동의 원인)"],[1137,29,"prominent","a. 현저한, 저명한"],[1138,29,"inferior","a. 열등한"],[1139,29,"rigid","a. 엄격한, 융통성이 없는"],[1140,29,"archaeology","n. 고고학"],[1141,29,"subtract","v. 빼다"],[1142,29,"impulse","n. 충동, 추진"],[1143,29,"utmost","a. 최대한의 n. 최대한도"],[1144,29,"proficient","a. 숙달된"],[1145,29,"accumulate","v. 모으다, 축적하다"],[1146,29,"embody","v. 구현하다, 구체화하다"],[1147,29,"equity","n. 공평"],[1148,29,"violate","v. 위반하다, 침해하다"],[1149,29,"ambitious","a. 야심 있는"],[1150,29,"intact","a. 온전한, 손상되지 않은"],[1151,29,"borrow","v. 빌리다"],[1152,29,"attend","v. 출석하다, 보살피다"],[1153,29,"trim","v. 다듬다, 잘라내다, 장식하다"],[1154,29,"navigate","v. 길을 찾다, 항해[비행]하다"],[1155,29,"tray","n. 쟁반"],[1156,29,"consist","v. (부분·요소로) 이루어지다"],[1157,29,"ceremony","n. 의식, 식, 의례"],[1158,29,"attack","v. 공격하다 n. 공격"],[1159,29,"confine","v. 제한하다, 가두다 n. 한계"],[1160,29,"dispatch","v. 급파하다, 발송하다 n. 급파, 발송"],[1161,30,"diameter","n. 지름, 직경"],[1162,30,"anecdote","n. 일화, 비화"],[1163,30,"propriety","n. 적절성, 예의바름"],[1164,30,"blame","v. 비난하다, ~의 탓으로 돌리다 n. 비난"],[1165,30,"earn","v. (평판을) 얻다, 벌다"],[1166,30,"pledge","n. 약속, 맹세 v. 약속하다, 맹세하다"],[1167,30,"cost","v. (비용이) 들다 n. 비용, 대가"],[1168,30,"geology","n. 지질학"],[1169,30,"detect","v. 발견하다, 감지하다"],[1170,30,"temperate","a. (기후가) 온화한, 절제하는"],[1171,30,"soar","v. 높이 치솟다"],[1172,30,"mock","v. 조롱하다 a. 가짜의"],[1173,30,"disclose","v. 드러내다, 폭로하다"],[1174,30,"exhibit","v. 전시하다, 보여 주다 n. 전시, 전시품"],[1175,30,"symptom","n. 증상"],[1176,30,"invent","v. 발명하다"],[1177,30,"awkward","a. 어색한, 서투른"],[1178,30,"grind","v. 갈다, 빻다"],[1179,30,"expose","v. 드러내다, (비밀을) 폭로하다, 노출시키다"],[1180,30,"closet","n. 벽장"],[1181,30,"damp","a. 축축한 n. 습기"],[1182,30,"script","n. 손으로 쓰기, 대본"],[1183,30,"possibility","n. 가능성, 가망"],[1184,30,"discuss","v. 토론하다"],[1185,30,"sibling","n. 형제자매, 동기"],[1186,30,"lay","v. (물건을) 놓다, (알을) 낳다"],[1187,30,"flourish","v. 번영하다, 번창하다"],[1188,30,"discharge","n. 배출, 내보냄, 방전 v. 배출하다, 내보내다"],[1189,30,"thorough","a. 철저한"],[1190,30,"undertake","v. 수행하다, (일을) 떠맡다, 착수하다"],[1191,30,"panel","n. 토론자단, 패널, 넓은 직사각형의 합판"],[1192,30,"linguistic","a. 언어의, 언어학의"],[1193,30,"remedy","n. 치료, 요법"],[1194,30,"feed","v. 먹이를 주다, 부양하다"],[1195,30,"sophomore","n. (대학·고등학교의) 2학년생"],[1196,30,"remind","v. 상기시키다"],[1197,30,"sole","a. 유일한"],[1198,30,"pillar","n. 기둥"],[1199,30,"explode","v. 폭발하다"],[1200,30,"illusion","n. 환상, 착각"],[1201,31,"regret","v. 후회하다, 한탄하다 n. 유감, 후회"],[1202,31,"submit","v. 복종시키다, 복종하다, 제출하다"],[1203,31,"divine","a. 신(神)의, 신성한"],[1204,31,"revenue","n. 수입, 수익"],[1205,31,"corrupt","a. 부정한, 부패한 v. 타락시키다"],[1206,31,"separate","v. 분리하다"],[1207,31,"factual","a. 실제의"],[1208,31,"swamp","n. 늪지"],[1209,31,"expedition","n. 탐험(대)"],[1210,31,"abnormal","a. 비정상적인"],[1211,31,"storage","n. 저장, 저장고"],[1212,31,"revive","v. 되살아나다"],[1213,31,"consistent","a. 일관된, 모순이 없는"],[1214,31,"motion","n. 운동, 움직임 v. 몸짓으로 지시[신호]하다"],[1215,31,"patent","n. 특허, 특허권 v. ~의 특허를 얻다"],[1216,31,"virtue","n. 미덕"],[1217,31,"deadline","n. 마감 시간, 최종 기한"],[1218,31,"equator","n. 적도"],[1219,31,"cognitive","a. 인식의, 인지력 있는"],[1220,31,"hinder","v. 방해하다"],[1221,31,"humble","a. 겸손한, 비천한"],[1222,31,"bounce","v. (공이) 튀다, 뛰어오르다"],[1223,31,"imprison","v. 투옥하다"],[1224,31,"enlist","v. (군인을) 모집하다, 도움을 얻다"],[1225,31,"hygiene","n. 위생, 위생학"],[1226,31,"upcoming","a. 다가오는"],[1227,31,"trace","n. 흔적 v. 흔적을 쫓다"],[1228,31,"pulse","n. 맥박"],[1229,31,"locate","v. ~에 위치하다, (위치를) 찾아내다"],[1230,31,"controversy","n. 논란, 논쟁"],[1231,31,"flattery","n. 아첨"],[1232,31,"regard","v. ~으로 여기다 n. 관계, 고려"],[1233,31,"convenience","n. 편의, 편리"],[1234,31,"carbon","n. 탄소"],[1235,31,"rush","v. 돌진하다, 갑자기 일어나다"],[1236,31,"contaminate","v. 오염시키다"],[1237,31,"external","a. 외부의"],[1238,31,"herd","n. 짐승의 떼"],[1239,31,"allocate","v. 할당하다, 배분하다"],[1240,31,"gorgeous","a. 아주 멋진, 화려한"],[1241,32,"confess","v. 고백하다"],[1242,32,"subjective","a. 주관적인, 주격의"],[1243,32,"casual","a. 우연한, 무심결의, 격식을 차리지 않는"],[1244,32,"acknowledge","v. 인정하다"],[1245,32,"accord","v. 일치하다 n. 일치, 협정"],[1246,32,"immense","a. 막대한"],[1247,32,"extract","v. 추출하다 n. 추출물"],[1248,32,"sewage","n. 하수"],[1249,32,"reconciliation","n. 화해"],[1250,32,"explore","v. 탐험[탐사]하다"],[1251,32,"warrant","n. 보증, 영장 v. 보증하다"],[1252,32,"complement","v. 보완하다 n. 보충물"],[1253,32,"ceramic","n. 도자기 a. 도자기의"],[1254,32,"license","n. 면허, 인가 v. 면허[인가]를 내주다"],[1255,32,"emerge","v. 나타나다, 드러나다"],[1256,32,"halt","n. 정지, 일시 멈춤 v. 정지하다, 정지시키다"],[1257,32,"pierce","v. 꿰뚫다, ~에 구멍을 뚫다"],[1258,32,"ponder","v. 심사숙고하다"],[1259,32,"burglar","n. (주거 침입) 강도"],[1260,32,"stroke","n. 뇌졸중, 강타"],[1261,32,"lottery","n. 복권, 추첨"],[1262,32,"certificate","n. 증명서"],[1263,32,"transplant","n. 이식 v. 이식하다"],[1264,32,"cluster","n. 무리, (과일·꽃의) 송이, 성단"],[1265,32,"plea","n. 탄원, 간청, 변명"],[1266,32,"derive","v. 끌어내다, ~에서 비롯되다"],[1267,32,"plague","n. 전염병"],[1268,32,"ultrasound","n. 초음파"],[1269,32,"deluxe","a. 호화로운, 사치스러운"],[1270,32,"convey","v. 전달하다, 나르다"],[1271,32,"depth","n. 깊이"],[1272,32,"evaporate","v. 증발하다"],[1273,32,"lame","a. 절름발이의"],[1274,32,"intelligence","n. 지능, 지성"],[1275,32,"sour","a. 신맛이 나는"],[1276,32,"repetitive","a. 반복성의"],[1277,32,"oppress","v. 억압하다"],[1278,32,"leftover","a. 나머지의, 남은 n. 남은 음식"],[1279,32,"embrace","n. 포옹 v. 포옹하다, 받아들이다"],[1280,32,"blade","n. 칼날"],[1281,33,"abundant","a. 풍부한"],[1282,33,"duplicate","n. 복제품 v. 이중으로 하다, 복제하다"],[1283,33,"spoil","v. 망치다, 상하게 하다, 버릇없게 키우다"],[1284,33,"altitude","n. 고도, 높이"],[1285,33,"glimpse","n. 흘긋 봄 v. 흘긋 보다, 깨닫다"],[1286,33,"blend","n. 혼합 v. 혼합하다"],[1287,33,"swell","v. 부풀다 n. 팽창"],[1288,33,"grief","n. 큰 슬픔"],[1289,33,"beverage","n. 음료"],[1290,33,"warrior","n. 용사"],[1291,33,"shrub","n. 관목(灌木)"],[1292,33,"slice","n. 얇은 조각 v. 얇게 썰다"],[1293,33,"exotic","a. 이국적인"],[1294,33,"arrogant","a. 거만한"],[1295,33,"vanish","v. 사라지다"],[1296,33,"outbreak","n. (전쟁·질병 등의) 발발, 폭동"],[1297,33,"predominant","a. 뛰어난, 우세한"],[1298,33,"cozy","a. 아늑한"],[1299,33,"recommend","v. 추천하다"],[1300,33,"auction","n. 경매 v. 경매에 부치다"],[1301,33,"obsess","v. 강박 관념을 갖다, (망상이) 사로잡다"],[1302,33,"suitor","n. 소송인, 구혼자"],[1303,33,"rational","a. 이성적인, 합리적인"],[1304,33,"discreet","a. 분별 있는, 사려 깊은"],[1305,33,"pioneer","n. 개척자 a. 개척자의 v. 개척하다"],[1306,33,"assert","v. 주장하다, 행사하다"],[1307,33,"undo","v. 원상태로 돌리다, (매듭을) 풀다"],[1308,33,"inevitable","a. 피할 수 없는"],[1309,33,"elaborate","a. 정교한, 공들인"],[1310,33,"toss","v. 던지다"],[1311,33,"retain","v. 유지[보유]하다"],[1312,33,"maximize","v. 최대화하다, 최대한으로 활용하다"],[1313,33,"buildup","n. 축적"],[1314,33,"machinery","n. (집합적) 기계"],[1315,33,"sacrifice","v. 희생하다, 희생시키다 n. 희생, 제물"],[1316,33,"auditorium","n. 강당"],[1317,33,"linger","v. 오래 머물다, 계속되다"],[1318,33,"neglect","v. 무시하다 n. 소홀, 무시"],[1319,33,"feedback","n. 반응, 피드백"],[1320,33,"radioactive","a. 방사성의"],[1321,34,"impair","v. 손상시키다"],[1322,34,"metaphor","n. 은유, 은유법"],[1323,34,"dispense","v. 나누어 주다, 내놓다"],[1324,34,"bruise","n. 타박상, 멍 v. 타박상을 입히다"],[1325,34,"attorney","n. 변호사"],[1326,34,"sanitation","n. 위생"],[1327,34,"heredity","n. 유전, 유전 형질"],[1328,34,"naive","a. 순진한"],[1329,34,"shed","v. 떨구다, 흘리다, 발산하다"],[1330,34,"metropolitan","a. 수도권의, 대도시의"],[1331,34,"shield","n. 방패, 보호물 v. 보호하다"],[1332,34,"ecology","n. 생태학"],[1333,34,"record","v. 기록하다, 녹음하다 n. 기록, 증언"],[1334,34,"expel","v. 쫓아내다"],[1335,34,"plow","n. 쟁기 v. 쟁기질하다"],[1336,34,"prolong","v. 연장하다"],[1337,34,"fluent","a. 유창한"],[1338,34,"margin","n. 가장자리"],[1339,34,"induce","v. 유도하다, 설득하다"],[1340,34,"interior","n. 내부 a. 내부의"],[1341,34,"ornament","n. 장식 v. 장식하다"],[1342,34,"probe","v. 조사하다 n. 탐사선"],[1343,34,"vibrate","v. 진동하다, 흔들다"],[1344,34,"speculate","v. 사색하다, 투기하다"],[1345,34,"versus","p. ~ 대(對), ~와 대비하여"],[1346,34,"pregnant","a. 임신한"],[1347,34,"epidemic","n. 전염병, 유행병"],[1348,34,"precede","v. ~에 앞서다, 먼저 일어나다"],[1349,34,"breathtaking","a. 아슬아슬한, 숨 막히는"],[1350,34,"foundation","n. 기초, 토대, 재단"],[1351,34,"stimulate","v. 자극하다, 고무하다"],[1352,34,"fabric","n. 구조, 조직, 직물"],[1353,34,"overturn","v. 전복시키다 n. 전복"],[1354,34,"ripe","a. 익은"],[1355,34,"framework","n. 뼈대, 틀, 체제"],[1356,34,"urgent","a. 긴급한, 다급한"],[1357,34,"settle","v. 정착하다, 정착시키다, 결정하다"],[1358,34,"conflict","v. 충돌하다 n. 갈등, 충돌"],[1359,34,"vapor","n. 증기 v. 증발하다"],[1360,34,"tuition","n. 수업료"],[1361,35,"literature","n. 문학, 문예, 문헌"],[1362,35,"loop","n. 고리"],[1363,35,"quote","v. 인용하다"],[1364,35,"inhale","v. (숨을) 들이쉬다"],[1365,35,"prospect","n. 가능성, 전망"],[1366,35,"anchor","n. 닻, 앵커 v. 닻을 내리다"],[1367,35,"reference","n. 참조, 참고, 언급"],[1368,35,"compound","n. 화합물 a. 합성의 v. 혼합하다"],[1369,35,"withstand","v. 견디다"],[1370,35,"implement","n. 도구 v. 실행하다"],[1371,35,"anonymous","a. 익명의"],[1372,35,"collide","v. 충돌하다"],[1373,35,"memorial","n. 기념물, 기념관"],[1374,35,"vacant","a. 빈, 비어 있는"],[1375,35,"technical","a. 기술[기법]의, 전문적인"],[1376,35,"thrill","n. 스릴, 전율 v. 감동[흥분]시키다"],[1377,35,"wander","v. (정처 없이) 돌아다니다 n. 유랑, 방랑"],[1378,35,"proportion","n. 비율, 부분"],[1379,35,"antibiotic","n. 항생 물질"],[1380,35,"overtake","v. 따라잡다"],[1381,35,"resemble","v. 닮다, 비슷[유사]하다"],[1382,35,"orchard","n. 과수원"],[1383,35,"compassion","n. 연민, 동정"],[1384,35,"preoccupation","n. 몰두, 집착, 선취"],[1385,35,"paste","n. 풀, 반죽 v. 풀칠하다, 붙이다"],[1386,35,"provoke","v. 선동하다, 자극하다"],[1387,35,"wicked","a. 사악한"],[1388,35,"sprain","v. (발목·손목 등을) 삐다"],[1389,35,"sequence","n. 순서, 결과, 연속"],[1390,35,"stool","n. (등받이가 없는) 의자, 변기"],[1391,35,"disrupt","v. ~을 혼란에 빠뜨리다, 방해하다"],[1392,35,"solitary","a. 혼자의, 외로운, 고독한"],[1393,35,"bury","v. 파묻다"],[1394,35,"rust","n. 녹 v. 녹슬다, 녹이 슬게 하다"],[1395,35,"fad","n. 일시적 유행"],[1396,35,"referee","n. 심판 v. 심판하다"],[1397,35,"sector","n. 분야, 지역, 부채꼴"],[1398,35,"boost","n. 상승, 밀어올림 v. 밀어올리다"],[1399,35,"gymnastics","n. 체육, 체조"],[1400,35,"gross","a. 엄청난, 총합의 n. 총합 v. ~의 총이익을 올리다"],[1401,36,"last","v. 계속하다 n. 끈기"],[1402,36,"tariff","n. 관세 v. 관세를 부과하다"],[1403,36,"beloved","a. 사랑스러운"],[1404,36,"lyric","n. 노래 가사, 서정시 a. 서정적인"],[1405,36,"yeast","n. 효모 v. 발효하다"],[1406,36,"skyscraper","n. 마천루, 고층 건물"],[1407,36,"inquire","v. 묻다, 조사하다"],[1408,36,"spade","n. 삽"],[1409,36,"vacuum","n. 진공, 진공청소기 v. 진공청소기로 청소하다"],[1410,36,"migrate","v. 이동하다, 이주하다"],[1411,36,"spectacle","n. 광경"],[1412,36,"surplus","n. 과잉, 나머지 a. 과잉의, 나머지의"],[1413,36,"simulate","v. 가장하다, 모의 실험[훈련]하다"],[1414,36,"integration","n. 통합, (수학) 적분"],[1415,36,"hypothesis","n. 가설(假說)"],[1416,36,"affirm","v. 단언하다"],[1417,36,"fortress","n. (대규모의) 요새"],[1418,36,"reed","n. 갈대 a. 갈대의"],[1419,36,"cue","n. 단서, 신호"],[1420,36,"mole","n. 사마귀, 점"],[1421,36,"divide","v. 나누다, 분리하다 n. 분할"],[1422,36,"inborn","a. 타고난"],[1423,36,"overlap","v. 겹치다 n. 중복"],[1424,36,"fatigue","n. 피로 v. 피곤하게 하다"],[1425,36,"clone","n. 복제 생물, 클론 v. 복제하다"],[1426,36,"peel","v. ~의 껍질을 벗기다 n. 껍질"],[1427,36,"ease","v. 진정시키다 n. 편함, 용이함"],[1428,36,"overcome","v. 압도하다, 극복하다"],[1429,36,"fund","n. 기금 v. 자금을 제공하다"],[1430,36,"bias","n. 편견"],[1431,36,"vaccine","n. 백신, (컴퓨터) 바이러스 예방 프로그램"],[1432,36,"tread","v. 밟다, 걷다 n. 밟음"],[1433,36,"vomit","v. 토하다"],[1434,36,"prophecy","n. 예언"],[1435,36,"correspond","v. 일치하다, 서신 왕래하다"],[1436,36,"cling","v. 달라붙다, 집착하다"],[1437,36,"mutation","n. 돌연변이, 변화"],[1438,36,"obscure","a. 불분명한, 이해하기 어려운, 무명의"],[1439,36,"tyrant","n. 폭군, 전제 군주"],[1440,36,"odd","a. 이상한, 홀수의"],[1441,37,"intriguing","a. 아주 흥미로운"],[1442,37,"restrain","v. 억제하다, 구속하다"],[1443,37,"bundle","n. 묶음, 꾸러미"],[1444,37,"enclose","v. 동봉하다, 에워싸다"],[1445,37,"insert","v. 삽입하다"],[1446,37,"keen","a. 날카로운, 예민한"],[1447,37,"constrict","v. 죄다, 위축시키다"],[1448,37,"aid","v. 돕다 n. 도움, 조력"],[1449,37,"reputation","n. 평판, 명성"],[1450,37,"measurement","n. 측정, 측량, 치수"],[1451,37,"originate","v. 시작되다, 비롯하다"],[1452,37,"flour","n. 밀가루"],[1453,37,"manipulate","v. 조종하다, 조작하다"],[1454,37,"experiment","n. 실험 v. 실험하다"],[1455,37,"patriot","n. 애국자"],[1456,37,"interchange","n. 교환, 교차점(I.C.) v. 교환하다"],[1457,37,"intuitive","a. 직관적인, 직관에 의한"],[1458,37,"garment","n. 의복"],[1459,37,"spontaneous","a. 자발적인, 자연히 일어나는"],[1460,37,"vertical","a. 수직의"],[1461,37,"testify","v. 검증하다, 증명하다, 증언하다"],[1462,37,"mentor","n. 조언자"],[1463,37,"vivid","a. 생생한"],[1464,37,"pasture","n. 목초지, 목장"],[1465,37,"crust","n. 껍질, 지각"],[1466,37,"comprehend","v. 이해하다, 포함하다"],[1467,37,"plunge","v. 뛰어들다, 던져 넣다"],[1468,37,"nasty","a. 더러운, 불쾌한"],[1469,37,"appreciate","v. 이해하다, 감상하다, 고맙게 생각하다"],[1470,37,"emigrate","v. (타국으로) 이주하다"],[1471,37,"deed","n. 행위, 업적"],[1472,37,"skinny","a. 피골이 상접한, 마른"],[1473,37,"grill","n. 석쇠 v. 석쇠로 굽다, 심문하다"],[1474,37,"canal","n. 수로, 운하"],[1475,37,"curse","n. 저주 v. 저주하다"],[1476,37,"adverse","a. 거스르는, 반대의, 부정적인"],[1477,37,"censorship","n. 검열"],[1478,37,"forehead","n. 이마"],[1479,37,"appetite","n. 식욕, 욕망, 욕구"],[1480,37,"flaw","n. 결점, 흠"],[1481,38,"outgoing","a. 외향적인"],[1482,38,"verbal","a. 말의, 구두(口頭)의"],[1483,38,"liberate","v. 해방시키다, 자유롭게 하다"],[1484,38,"segregation","n. 인종 차별, 분리"],[1485,38,"advance","v. 나아가게 하다, 진척시키다 n. 전진"],[1486,38,"contemplate","v. ~을 숙고하다, 응시하다"],[1487,38,"underlying","a. 밑에 놓인, 기초를 이루는"],[1488,38,"academic","a. 학문적인, 학구적인"],[1489,38,"stem","v. 생기다, 일어나다 n. 줄기, 대"],[1490,38,"irrigation","n. 관개"],[1491,38,"consecutive","a. 연속적인, 일관된"],[1492,38,"superficial","a. 표면상의, 피상적인"],[1493,38,"refuge","n. 피난, 피난처, 위안"],[1494,38,"swear","v. 맹세하다, 욕하다"],[1495,38,"allergy","n. 알레르기"],[1496,38,"norm","n. 규범, 기준, 표준"],[1497,38,"endeavor","n. 노력 v. 노력하다"],[1498,38,"erect","v. 세우다 a. 똑바로 선"],[1499,38,"feminine","a. 여성의, 여성스러운"],[1500,38,"drowsy","a. 졸리는"],[1501,38,"inspect","v. 검사하다, 점검하다"],[1502,38,"carriage","n. 마차, 탈것"],[1503,38,"primitive","a. 원시의, 초기의, 미개의"],[1504,38,"compress","v. 압축하다"],[1505,38,"govern","v. 통치하다, 지배[좌우]하다"],[1506,38,"cemetery","n. 공동묘지"],[1507,38,"shatter","v. 산산이 부서지다 n. 파편"],[1508,38,"exaggerate","v. 과장하다, 과장해서 말하다"],[1509,38,"random","a. 무작위의, 임의의"],[1510,38,"feast","v. 즐겁게[기쁘게] 하다 n. 축제(일), 잔치"],[1511,38,"commemorate","v. 기념하다"],[1512,38,"steep","a. 가파른, 경사가 급한"],[1513,38,"multitask","v. 다중작업을 하다"],[1514,38,"toxic","a. 유독한, 중독의"],[1515,38,"stare","v. 응시하다, 노려보다"],[1516,38,"chronic","a. 만성적인, 장기간의"],[1517,38,"designate","v. 지정하다, 가리키다"],[1518,38,"dramatic","a. 연극의, 극적인"],[1519,38,"intense","a. 강렬한"],[1520,38,"propaganda","n. 선전 활동, 선전"],[1521,39,"numerous","a. 다수의, 수많은"],[1522,39,"shiver","n. 떨림 v. 떨다"],[1523,39,"retarded","a. (정서·지능·학력) 발달이 뒤진"],[1524,39,"ongoing","a. 계속되는, 진행 중인"],[1525,39,"mention","v. 언급하다 n. 언급"],[1526,39,"executive","a. 집행의, 경영의 n. 임원, 경영진"],[1527,39,"chaos","n. 혼돈, 무질서"],[1528,39,"microscope","n. 현미경"],[1529,39,"belonging","n. (pl.) 소유물, 소지품"],[1530,39,"vulnerable","a. 취약한, 상처 입기 쉬운"],[1531,39,"implication","n. 함축, 암시"],[1532,39,"alley","n. 오솔길, 골목길"],[1533,39,"authentic","a. 진짜의, 진정한"],[1534,39,"compel","v. 강요하다, ~하게 만들다"],[1535,39,"transition","n. 변천, 과도기"],[1536,39,"index","n. 지수, 색인"],[1537,39,"incline","v. 내키게 하다, 기울이다 n. 경사"],[1538,39,"attain","v. 달성하다"],[1539,39,"innate","a. 천부적인, 본질적인"],[1540,39,"ingenuity","n. 솜씨, 독창력"],[1541,39,"upset","a. 마음이 상한, 당황한 v. 뒤엎다 n. 전복"],[1542,39,"stretch","v. 늘이다, 뻗다 n. 신축성"],[1543,39,"seize","v. 붙잡다, 이해하다"],[1544,39,"screw","n. 나사 v. 나사로 고정하다"],[1545,39,"savage","a. 야만적인, 잔인한 n. 야만인"],[1546,39,"province","n. 지방, (광역 행정 구역으로서의) 도, 분야"],[1547,39,"coordinate","v. 조정하다 a. 동등한"],[1548,39,"deficient","a. 부족한, 불완전한"],[1549,39,"privilege","n. 특권 v. 특권을 주다"],[1550,39,"preview","n. 미리 보기, 예고편, 시사회"],[1551,39,"equivalent","a. 동등한, 상당하는"],[1552,39,"shelter","v. 피난하다, 보호하다 n. 피난처"],[1553,39,"throughout","p. (장소) 도처에, (시간) 처음부터 끝까지"],[1554,39,"outlaw","v. 금지하다, 법적으로 무효화하다 n. 무법자"],[1555,39,"squeeze","v. 짜내다"],[1556,39,"breakthrough","n. 비약적 발전, 돌파구"],[1557,39,"consent","n. 동의, 허락 v. 동의하다"],[1558,39,"orphan","n. 고아"],[1559,39,"negotiate","v. 협상하다"],[1560,39,"nuisance","n. 귀찮은 사람, 성가신 것"],[1561,40,"recipe","n. 조리법, 비법"],[1562,40,"deceive","v. 속이다"],[1563,40,"sweep","v. 휩쓸다, 청소하다"],[1564,40,"profile","n. 옆모습, 인물 소개"],[1565,40,"enterprise","n. 기업, 사업"],[1566,40,"successive","a. 연속되는, 상속의"],[1567,40,"paradox","n. 역설, 패러독스"],[1568,40,"surpass","v. 능가하다"],[1569,40,"correlation","n. 상관관계, 상호 관련"],[1570,40,"magnitude","n. 거대함, 중요성, (지진) 진도"],[1571,40,"aesthetics","n. 미학"],[1572,40,"earnest","a. 진지한 n. 진심"],[1573,40,"tremble","v. 떨다"],[1574,40,"slaughter","v. 도살하다 n. 도살, 대학살"],[1575,40,"surrender","v. 넘겨주다, 포기하다, 항복하다"],[1576,40,"philosophy","n. 철학"],[1577,40,"deplete","v. 고갈시키다, 격감시키다"],[1578,40,"admire","v. 감탄하다, 존경하다"],[1579,40,"starvation","n. 아사, 기아, 궁핍"],[1580,40,"summon","v. 소집하다, 소환하다"],[1581,40,"afford","v. ~할 여유가 있다"],[1582,40,"blunt","a. 무뚝뚝한, 퉁명스러운, 둔감한, 무딘"],[1583,40,"sprint","n. 단거리 경주 v. 전력 질주하다"],[1584,40,"passerby","n. 통행인, 지나가는 사람"],[1585,40,"tense","a. 팽팽한, 긴장한 v. 긴장시키다"],[1586,40,"boil","v. 끓다, 삶다"],[1587,40,"timber","n. 목재"],[1588,40,"collaborate","v. 협력하다"],[1589,40,"stance","n. 서 있는 자세, 태도"],[1590,40,"blow","v. 불다, 바람에 날리다"],[1591,40,"ballot","n. 투표, 투표용지 v. 투표하다"],[1592,40,"division","n. 분할, 나누기, (대학의) 학부, (군대) 사단"],[1593,40,"acquaintance","n. 아는 사이, 교제"],[1594,40,"amplify","v. 확대하다, 증폭시키다"],[1595,40,"contradict","v. 부정하다, 반박하다, 모순되다"],[1596,40,"burst","v. 터뜨리다 n. 파열, 폭발"],[1597,40,"cast","v. 내던지다, (빛을) 발하다"],[1598,40,"falsify","v. 잘못을 입증하다"],[1599,40,"psychic","a. 초능력이 있는, 초자연적인 n. 무당, 영매"],[1600,40,"paddle","n. 노 v. 노를 젓다"],[1601,41,"steer","v. 조종하다, 인도하다"],[1602,41,"affection","n. 애정, 감정"],[1603,41,"bid","v. 말하다, 명령하다, 입찰하다 n. 입찰"],[1604,41,"compost","n. 혼합물, 퇴비"],[1605,41,"temperament","n. 기질, 성질"],[1606,41,"rent","v. 임대하다 n. 집세"],[1607,41,"shred","v. 갈기갈기 찢다, 째다"],[1608,41,"unpredictable","a. 예측할 수 없는"],[1609,41,"tribute","n. 감사[존경]의 표시, 증정물, 진상품"],[1610,41,"artery","n. 동맥, 간선 도로"],[1611,41,"inherent","a. 내재하는, 타고난, 고유의"],[1612,41,"harass","v. 괴롭히다, 희롱하다, 침략하다"],[1613,41,"narrative","n. (실제의) 이야기, 서술 a. 이야기의"],[1614,41,"assemble","v. 모으다, 조립하다, 소집하다"],[1615,41,"spike","n. 대못 v. 대못을 박다"],[1616,41,"sneak","v. 살금살금 움직이다, 몰래 움직이다"],[1617,41,"sophisticated","a. 세련된, 정교한"],[1618,41,"handle","v. 다루다"],[1619,41,"enlightenment","n. 계몽, 개화, 깨달음"],[1620,41,"cosmetic","n. 화장품 a. 미용의"],[1621,41,"gracious","a. 상냥한, 우아한"],[1622,41,"aspire","v. 열망하다, 동경하다"],[1623,41,"obstruct","v. 막다, 방해하다"],[1624,41,"patrol","n. 순찰, 순찰병 v. 순찰하다"],[1625,41,"accelerate","v. 가속하다, 촉진하다"],[1626,41,"heatstroke","n. 일사병, 열사병"],[1627,41,"oval","a. 달걀 모양의, 타원형의 n. 타원체"],[1628,41,"veteran","a. 경험이 많은 n. 베테랑, 퇴역 군인"],[1629,41,"trail","n. 오솔길, 자국"],[1630,41,"vocation","n. 직업, 천직"],[1631,41,"vegetarian","n. 채식주의자 a. 채식주의자의, 채식의"],[1632,41,"decode","v. (암호를) 해독하다"],[1633,41,"fellow","n. 사나이, 동료 a. 동료의"],[1634,41,"mandate","v. 명령하다, 위임하다"],[1635,41,"perish","v. 죽다, 소멸하다"],[1636,41,"inseparable","a. 불가분의, 떼어 낼 수 없는"],[1637,41,"domain","n. 영역, 영토, 분야"],[1638,41,"statesman","n. 정치가"],[1639,41,"connotation","n. 함축, 내포"],[1640,41,"stereotype","n. 인습, 고정관념, 연판 인쇄"],[1641,42,"hollow","a. 속이 빈, 오목한 n. 움푹한 곳"],[1642,42,"structural","a. 구조(상)의, 조직(상)의"],[1643,42,"mortgage","n. 저당, 주택 융자, (담보) 대출"],[1644,42,"inject","v. 주사하다, 도입하다"],[1645,42,"crisis","n. 위기, 중대 국면"],[1646,42,"latter","a. 나중 쪽의, 후자의"],[1647,42,"illuminate","v. 밝게 비추다, 계몽하다, 설명하다"],[1648,42,"mimic","v. 모방하다 a. 흉내를 잘 내는, 모조의"],[1649,42,"unearth","v. 발굴하다, 발견하다"],[1650,42,"wail","v. 울부짖다 n. 울부짖음"],[1651,42,"shudder","v. 떨다, 몸서리치다"],[1652,42,"stride","v. 성큼성큼 걷다 n. 성큼성큼 걷기, 진보"],[1653,42,"applicant","n. 신청자, 지원자"],[1654,42,"disprove","v. 오류를 증명하다, 논박하다"],[1655,42,"disturb","v. 방해하다, 어지럽히다, 혼란케 하다"],[1656,42,"hemisphere","n. 반구체, (지구·천체의) 반구"],[1657,42,"recur","v. 재발하다, 되풀이하다"],[1658,42,"elastic","a. 탄력 있는, 융통성 있는"],[1659,42,"counterpart","n. 상대, 대응하는 것[사람]"],[1660,42,"stubborn","a. 완고한, 고집이 센"],[1661,42,"suicide","n. 자살"],[1662,42,"lure","v. 유혹하다 n. 매력"],[1663,42,"underprivileged","a. 권리가 적은, 혜택받지 못한"],[1664,42,"morale","n. 사기, 의욕"],[1665,42,"examine","v. 검사하다, 진찰하다"],[1666,42,"compromise","v. 타협하다 n. 타협"],[1667,42,"foremost","a. 주요한, 으뜸가는"],[1668,42,"precaution","n. 조심, 예방 조치"],[1669,42,"torture","n. 고문 v. 고문하다"],[1670,42,"entrust","v. 위임하다, 위탁하다"],[1671,42,"sway","n. 흔들림 v. 흔들리다"],[1672,42,"religious","a. 종교(상)의, 종교적인"],[1673,42,"obligation","n. 의무, 계약, 채무"],[1674,42,"pest","n. 해충, 역병, 귀찮은 것"],[1675,42,"subdue","v. 정복하다, 진압하다, 완화하다"],[1676,42,"incorporate","v. 법인회사로 만들다, 통합시키다"],[1677,42,"regime","n. 정권, 제도"],[1678,42,"terminate","v. 끝내다, 종결짓다"],[1679,42,"rebel","n. 반역자 v. 반역을 일으키다"],[1680,42,"meanwhile","ad. 한편, 그 동안에"],[1681,43,"folklore","n. 민속, 민속 신앙, 신화"],[1682,43,"vast","a. 막대한, 방대한"],[1683,43,"preliminary","a. 예비의, 임시의 n. 예선, 사전 준비"],[1684,43,"theft","n. 도둑질, (야구) 도루"],[1685,43,"painkiller","n. 진통제"],[1686,43,"amend","v. 수정하다, 고치다"],[1687,43,"recess","n. 휴식, 휴업, 구석진 곳"],[1688,43,"exploit","v. (부당하게) 이용하다, 착취하다 n. 위업"],[1689,43,"autonomy","n. 자치, 자율"],[1690,43,"outfit","n. 옷[복장], 장비 v. 공급하다, 준비하다"],[1691,43,"mourn","v. 슬퍼하다, 애도하다"],[1692,43,"evoke","v. 일깨우다, 이끌어 내다"],[1693,43,"burden","n. 짐, 부담 v. ~에게 짐을 지우다"],[1694,43,"latitude","n. (지리) 위도, 위선"],[1695,43,"patch","n. 헝겊 조각, 좁은 땅 v. 헝겊 조각을 붙이다"],[1696,43,"maternal","a. 어머니의, 모계의, 모국어의"],[1697,43,"pharmacy","n. 약국, 약학"],[1698,43,"marine","a. 해양의, 바다의"],[1699,43,"prestigious","a. 명성이 있는, 고급의, 일류의"],[1700,43,"friction","n. 마찰, 의견 충돌"],[1701,43,"defend","v. 방어하다, 수비하다"],[1702,43,"fraud","n. 사기, 속임, 사기꾼"],[1703,43,"easygoing","a. 태평스러운, 안이한"],[1704,43,"insomnia","n. 불면증"],[1705,43,"intermediate","a. 중간의 n. 중간물"],[1706,43,"transport","v. 수송[운송]하다 n. 수송"],[1707,43,"paradigm","n. 패러다임, 이론적 틀"],[1708,43,"charge","v. 요금을 청구하다, 채우다"],[1709,43,"rapid","a. 빠른, 신속한"],[1710,43,"premature","a. 조숙한, 조산한, 시기상조의"],[1711,43,"pollute","v. 오염시키다, 더럽히다"],[1712,43,"altruism","n. 이타주의"],[1713,43,"fiber","n. 섬유(질)"],[1714,43,"irony","n. 반어법, 아이러니"],[1715,43,"spectator","n. 관객, 구경꾼"],[1716,43,"medieval","a. 중세의"],[1717,43,"analogy","n. 유추, 비슷함"],[1718,43,"snatch","v. 잡아채다, 날치기하다"],[1719,43,"anthropology","n. 인류학"],[1720,43,"outline","v. 개요를 말하다, 윤곽을 보여 주다 n. 개요"],[1721,44,"slogan","n. 선전 문구, 슬로건"],[1722,44,"composure","n. 침착, 평정"],[1723,44,"incurable","a. 불치의, 구제 불능의 n. 불치 환자"],[1724,44,"parallel","a. 평행의, 유사한 n. 평행선 v. 유사하다"],[1725,44,"indulge","v. 탐닉하다, 충족시키다, 제멋대로 하게 하다"],[1726,44,"meadow","n. 목초지, 초원"],[1727,44,"venture","v. 모험하다 n. 모험"],[1728,44,"deflect","v. 빗나가다, 빗나가게 하다, 막다"],[1729,44,"adorable","a. 귀여운, 사랑스러운"],[1730,44,"complacent","a. (스스로) 만족해하는, 현실에 안주하는"],[1731,44,"explicit","a. 명백한, 분명한"],[1732,44,"sturdy","a. 견고한, 강건한"],[1733,44,"primate","n. 영장류"],[1734,44,"patron","n. 후원자, 단골 손님, 고객"],[1735,44,"endure","v. 참다, 인내하다, 견디다"],[1736,44,"manifest","v. 명백하게 하다, 증명하다 a. 명백한"],[1737,44,"imperial","a. 제국의, 황제의"],[1738,44,"duration","n. 지속, 지속 기간"],[1739,44,"populate","v. 거주시키다"],[1740,44,"frugal","a. 검소한, 절약하는"],[1741,44,"registration","n. 기재, 등록"],[1742,44,"rejoice","v. 크게 기뻐하다"],[1743,44,"comprise","v. 포함하다, 구성하다"],[1744,44,"textile","a. 직물의, 방직의 n. 직물"],[1745,44,"lurk","v. 숨다, 잠복하다"],[1746,44,"humanity","n. 인류, 인간성, 인간애"],[1747,44,"approximate","v. (수량 등이) ~에 가까워지다 a. 대략의"],[1748,44,"revenge","n. 복수 v. 복수하다"],[1749,44,"sarcastic","a. 비꼬는, 풍자적인"],[1750,44,"terrain","n. 지형, 지역, 분야, 범위"],[1751,44,"toll","n. 사용세, 통행료 v. 요금으로 징수하다"],[1752,44,"warfare","n. 전쟁, 교전 상태"],[1753,44,"mortal","a. 죽을 운명의, 치명적인"],[1754,44,"spouse","n. 배우자"],[1755,44,"crispy","a. 바삭바삭한, 부서지기 쉬운"],[1756,44,"statistical","a. 통계적인, 통계(학)상의"],[1757,44,"rubbish","n. 쓰레기, 폐기물"],[1758,44,"stimulus","n. 자극, 격려"],[1759,44,"clumsy","a. 어색한, 서투른"],[1760,44,"subsequent","a. 그 후의, ~에 이어 일어나는"],[1761,45,"relevant","a. 관련된, 적절한"],[1762,45,"predator","n. 포식자, 약탈자, 육식 동물"],[1763,45,"drain","v. 물을 빼내다, 소모시키다"],[1764,45,"countless","a. 셀 수 없는, 무수한"],[1765,45,"condense","v. 농축하다, 요약하다"],[1766,45,"post","v. (벽 따위에) 붙이다 n. 우편"],[1767,45,"poise","v. 균형을 잡다 n. 균형, 평정"],[1768,45,"disciple","n. 제자, 문하생"],[1769,45,"gust","n. 돌풍, 질풍"],[1770,45,"collective","a. 집합적인, 집단적인 n. 집단"],[1771,45,"scope","n. (관찰·활동의) 범위, 시야 v. 조사하다"],[1772,45,"compatible","a. 양립할 수 있는, 모순이 없는"],[1773,45,"border","n. 가장자리, 국경 v. 접하다"],[1774,45,"frontier","n. 국경 a. 국경의, 최첨단의"],[1775,45,"withhold","v. 억누르다, 억제하다, 보류하다"],[1776,45,"verdict","n. 판결, 결정"],[1777,45,"stall","n. 마구간, 우리, 핑계 v. 핑계를 대다"],[1778,45,"apparatus","n. 장치, 기구, 조직"],[1779,45,"hail","n. 싸락눈, 우박 v. 우박이 내리다"],[1780,45,"outburst","n. 분출, 폭발"],[1781,45,"vanity","n. 허영심, 허무함"],[1782,45,"firsthand","ad. 직접, 바로 a. 직접의"],[1783,45,"obesity","n. (병적인) 비만, 비대"],[1784,45,"dilemma","n. 진퇴양난, 딜레마, 궁지"],[1785,45,"render","v. ~이 되게 하다, 주다, 표현하다"],[1786,45,"indispensable","a. 필수 불가결한 n. 없어서는 안 될 것"],[1787,45,"outdated","a. 시대에 뒤진, 구식의"],[1788,45,"bother","v. 일부러 ~하다, 괴롭히다"],[1789,45,"counteract","v. (효력을) 중화시키다, 약화시키다"],[1790,45,"static","a. 정적인, 고정된"],[1791,45,"sustain","v. 지탱하다, 유지하다"],[1792,45,"posture","n. 태도, 자세"],[1793,45,"discourse","n. 담화, 강연"],[1794,45,"bribe","n. 뇌물 v. 뇌물을 주다"],[1795,45,"juggle","v. 잘 처리하다, 저글링하다"],[1796,45,"perspiration","n. 땀, 노력"],[1797,45,"retention","n. 보유, 기억(력)"],[1798,45,"valiant","a. 용감한, 용맹스런"],[1799,45,"distress","n. 고민, 고통 v. ~을 괴롭히다"],[1800,45,"nursery","n. 육아실, 탁아소, 양성소"],[1801,46,"encircle","v. 에워싸다, 둘러싸다"],[1802,46,"notion","n. 개념, 의견"],[1803,46,"disgust","n. 혐오감 v. 역겹게 하다"],[1804,46,"fragment","n. 일부분, 부서진 조각"],[1805,46,"oversee","v. 감독하다, 감시하다"],[1806,46,"creep","v. 기다, (덩굴 등이) 얽히다 n. 포복, 서행"],[1807,46,"clarify","v. 명백히 하다"],[1808,46,"contagious","a. 전염성의, 감염성의"],[1809,46,"deterioration","n. 악화, (가치의) 하락"],[1810,46,"currency","n. 통화, 통용"],[1811,46,"janitor","n. 문지기, 관리인, 잡역부"],[1812,46,"blush","v. 얼굴을 붉히다, 부끄러워하다"],[1813,46,"intervene","v. 사이에 끼어들다, 개입하다, 방해하다"],[1814,46,"nomad","n. 유목민, 방랑자"],[1815,46,"cuisine","n. (독특한) 요리, 요리법"],[1816,46,"dare","v. 감히 ~하다"],[1817,46,"solvent","a. 용해력이 있는, 지불 능력이 있는 n. 용제"],[1818,46,"cultivate","v. 경작하다, 양성하다, 계발하다"],[1819,46,"ascent","n. 상승, 오름"],[1820,46,"advocate","n. 옹호자, 지지자 v. 지지하다"],[1821,46,"spur","n. 자극, 고무 v. 박차를 가하다"],[1822,46,"discern","v. 식별하다, 분별하다, ~을 인식하다"],[1823,46,"scheme","n. 계획, 체계 v. 계획하다"],[1824,46,"weigh","v. 무게를 달다"],[1825,46,"publicity","n. 널리 알려짐, 명성, 광고, 선전"],[1826,46,"declare","v. 선언하다"],[1827,46,"brisk","a. 활발한, 번창하는, 상쾌한"],[1828,46,"exile","n. 망명, 망명자 v. 망명시키다"],[1829,46,"whisper","v. 속삭이다 n. 속삭임"],[1830,46,"fling","v. 내던지다, 돌진하다"],[1831,46,"deviation","n. 변경, 일탈"],[1832,46,"dissolve","v. 용해하다, 해산하다, 해소하다"],[1833,46,"constraint","n. 강제, 압박, 거북스러움"],[1834,46,"itch","n. 가려움 v. 가렵다, (~하고 싶어) 못 견디다"],[1835,46,"unanimous","a. 만장일치의, 합의의"],[1836,46,"delude","v. 속이다, 착각하게 하다"],[1837,46,"dehydrate","v. 탈수하다, 건조시키다"],[1838,46,"underneath","p. ~의 아래에, 밑에"],[1839,46,"metabolism","n. 물질대사, 신진대사"],[1840,46,"appoint","v. 임명[지명]하다, (시간·장소를) 정하다"],[1841,47,"pinch","v. ~을 꼬집다, 집다, 괴롭히다"],[1842,47,"punctual","a. 시간을 지키는, 기한을 지키는"],[1843,47,"arbitrary","a. 임의적인, 독단적인"],[1844,47,"catastrophe","n. 대참사, 큰 재앙"],[1845,47,"exert","v. (힘·지식 등을) 쓰다, 발휘하다"],[1846,47,"aviate","v. 비행하다, (비행기를) 조종하다"],[1847,47,"headquarters","n. 본부 (단수 취급)"],[1848,47,"rectangular","a. 직사각형의, 직각의"],[1849,47,"delegate","v. 파견하다 n. 사절, 대표"],[1850,47,"elect","v. 선출하다"],[1851,47,"thorn","n. 가시, 괴로움의 원인"],[1852,47,"empathize","v. 공감하다, 감정 이입을 하다"],[1853,47,"expertise","n. 전문 지식[기술]"],[1854,47,"renovate","v. ~을 새롭게 하다, 수리하다"],[1855,47,"wrench","n. 렌치 (너트를 죄는 기구), 비틀기 v. 비틀다"],[1856,47,"interval","n. 간격, 틈"],[1857,47,"degrade","v. 저하시키다, 강등시키다, 분해하다"],[1858,47,"retort","n. 반박, 말대꾸 v. 반박하다, 말대꾸하다"],[1859,47,"asthma","n. 천식"],[1860,47,"realm","n. 왕국, 영역"],[1861,47,"segment","n. 부분 v. 분할하다"],[1862,47,"coexist","v. 공존하다"],[1863,47,"hospitality","n. 환대, 후한 대접"],[1864,47,"estate","n. 소유지, 재산"],[1865,47,"displace","v. 옮겨 놓다, 대신하다, 쫓아내다"],[1866,47,"cripple","v. ~을 불구로 만들다 n. 지체 부자유자"],[1867,47,"drawback","n. 문제점, 장애"],[1868,47,"tactics","n. 방안, 전술"],[1869,47,"dread","n. 공포 v. 무서워하다"],[1870,47,"dispute","n. 논쟁, 분쟁 v. 토의하다"],[1871,47,"console","v. 위로하다"],[1872,47,"stack","n. 더미, 쌓아올림, (도서관의) 서가 v. 쌓다"],[1873,47,"cynical","a. 냉소적인, 비꼬는"],[1874,47,"reprove","v. 꾸짖다, 책망하다"],[1875,47,"verify","v. 검증하다, 입증하다"],[1876,47,"engross","v. 열중하게 하다"],[1877,47,"bulk","n. 크기, 부피, 대부분"],[1878,47,"despise","v. 경멸하다"],[1879,47,"manuscript","n. 손으로 쓴 것, 필사본, 원고"],[1880,47,"flee","v. 달아나다, 도망치다"],[1881,48,"prehistoric","a. 선사 시대의"],[1882,48,"barrel","n. 통, (석유) 1배럴"],[1883,48,"predecessor","n. 앞서 있었던 것, 선배, 전임자"],[1884,48,"alienate","v. 소외시키다, 멀리하다"],[1885,48,"proclaim","v. 선언하다, 증명하다"],[1886,48,"subordinate","a. 하급의, 부차적인 n. 하급자 v. 경시하다"],[1887,48,"furnish","v. (필요한 것을) 제공하다, 갖추다"],[1888,48,"fume","n. 연기 v. 연기 나다"],[1889,48,"staple","a. 주요한 n. 주요 산물"],[1890,48,"dimension","n. 크기, 치수, 규모, 차원"],[1891,48,"dispersal","n. 분산, 확산"],[1892,48,"eloquent","a. 웅변의, 표현이 풍부한"],[1893,48,"innermost","a. 가장 깊숙한 n. 가장 깊은 부분"],[1894,48,"hazardous","a. 위험한, 모험적인"],[1895,48,"skull","n. 두개골"],[1896,48,"detergent","n. 세제"],[1897,48,"brutal","a. 야만적인, 짐승 같은, 잔혹한"],[1898,48,"rash","n. 발진, 뾰루지 a. 무분별한, 성급한"],[1899,48,"bypass","v. 우회하다 n. 우회로"],[1900,48,"accommodate","v. 수용하다, 숙박시키다"],[1901,48,"tact","n. 재치, 기지"],[1902,48,"monotonous","a. 단조로운, 지루한"],[1903,48,"perpetual","a. 영구의, 끊임없는"],[1904,48,"eligible","a. 적격의 n. 적임자"],[1905,48,"legacy","n. 유산"],[1906,48,"melancholy","a. 우울한 n. 우울함"],[1907,48,"simplicity","n. 간단, 단순, 소박"],[1908,48,"hierarchy","n. 계급(제), 위계"],[1909,48,"reside","v. 거주하다, 속하다"],[1910,48,"enact","v. 법제화하다, 제정하다"],[1911,48,"burnout","n. 극도의 피로, 쇠진, 연소 종료"],[1912,48,"legitimate","a. 타당한, 정당한, 합법의"],[1913,48,"shuffle","v. 질질 끌며 걷다, 뒤섞다"],[1914,48,"summarize","v. 요약하다"],[1915,48,"eject","v. 쫓아내다, 배출하다"],[1916,48,"intersection","n. 교차(로), 횡단"],[1917,48,"quest","n. 탐색, 탐구"],[1918,48,"linear","a. 직선의, 길이의, 1차(원)의"],[1919,48,"landslide","n. 산사태, 압도적인 승리"],[1920,48,"plausible","a. 그럴듯한, 말재주 있는"],[1921,49,"endow","v. 부여하다, 기부하다"],[1922,49,"extrinsic","a. 외적인, 외부의"],[1923,49,"merge","v. 합병하다, 차차 변하다"],[1924,49,"frantic","a. 광란의, 미친"],[1925,49,"moan","n. 신음 v. 신음하다, 불평하다"],[1926,49,"merchandise","n. (집합적) 상품"],[1927,49,"respectively","ad. 각각, 저마다"],[1928,49,"yearn","v. 그리워하다, 열망하다"],[1929,49,"conviction","n. 확신, 유죄 판결"],[1930,49,"stout","a. 뚱뚱한, (옷 등이) 튼튼한"],[1931,49,"reckon","v. 세다, 계산하다, 생각하다"],[1932,49,"enchant","v. 매혹하다, ~에 마법을 걸다"],[1933,49,"entail","v. 수반하다, 의미하다, 필요로 하다"],[1934,49,"demolish","v. 파괴하다, 폐지하다"],[1935,49,"degenerate","v. 퇴보하다, 타락하다"],[1936,49,"sentiment","n. 감상, 정서"],[1937,49,"offspring","n. 자식, 새끼, 성과"],[1938,49,"detest","v. 혐오하다, 미워하다"],[1939,49,"tackle","v. (일·문제를) 다루다 n. 도구, (축구의) 태클"],[1940,49,"defy","v. 물리치다, (공공연히) 반항하다, 무시하다"],[1941,49,"inference","n. 추론"],[1942,49,"refraction","n. (빛·소리 따위의) 굴절"],[1943,49,"dusk","n. 땅거미, 어스름"],[1944,49,"detach","v. 떼어 내다, 분리하다"],[1945,49,"antagonist","n. 적대자, 라이벌"],[1946,49,"thrust","v. 밀다, 밀치다"],[1947,49,"creed","n. 신념, (종교의) 교의"],[1948,49,"equate","v. 동일시하다, 일치하다"],[1949,49,"misplace","v. 잘못 두다"],[1950,49,"auditory","a. 귀의, 청각의"],[1951,49,"missionary","n. 선교사"],[1952,49,"cosmopolitan","a. 세계적인, 세계주의의 n. 세계인, 국제인"],[1953,49,"secondhand","a. 중고의, 간접적인"],[1954,49,"multiple","a. 복합적인, 다수의, 다양한 n. (수학) 배수"],[1955,49,"embed","v. 깊숙이 박다, 깊이 간직하다"],[1956,49,"propel","v. 나아가게 하다, 추진하다"],[1957,49,"reptile","n. 파충류"],[1958,49,"erosion","n. 부식, 침식"],[1959,49,"feat","n. 위업, 공적"],[1960,49,"utensil","n. 가정용품, 기구, 도구"],[1961,50,"penetrate","v. 침투하다, 꿰뚫다"],[1962,50,"intrude","v. 방해하다, 침범하다"],[1963,50,"notable","a. 주목할 만한"],[1964,50,"grumble","v. 불평하다, 으르렁거리다 n. 불평"],[1965,50,"landfill","n. 쓰레기 매립지"],[1966,50,"scrutiny","n. (면밀한) 조사"],[1967,50,"reckless","a. 부주의한, 무모한"],[1968,50,"synthetic","a. (화학) 합성의"],[1969,50,"productive","a. 생산적인, 다산의"],[1970,50,"outset","n. 착수, 시작"],[1971,50,"peril","n. 위험, 위기"],[1972,50,"pitfall","n. 함정, 위험"],[1973,50,"kidnap","n. 유괴 v. 납치하다"],[1974,50,"liable","a. 책임이 있는, ~할 것 같은, ~하기 쉬운"],[1975,50,"insane","a. 정신 이상의, 비상식적인"],[1976,50,"rage","n. 격노"],[1977,50,"radius","n. 반지름"],[1978,50,"hybrid","n. 혼합, 잡종"],[1979,50,"uncover","v. 폭로하다, (비밀 등을) 알아내다"],[1980,50,"limb","n. 사지, 팔다리"],[1981,50,"setback","n. 좌절, 차질"],[1982,50,"prudent","a. 신중한, 빈틈없는"],[1983,50,"solidify","v. 굳어지다, 굳히다, 확고히 하다"],[1984,50,"grudge","n. 원한, 유감"],[1985,50,"lessen","v. 줄(이)다"],[1986,50,"tangle","v. 얽히게 하다, 혼란시키다"],[1987,50,"subsidy","n. 보조금, 장려금"],[1988,50,"ambiguous","a. 애매모호한, 두 가지 뜻으로 해석 가능한"],[1989,50,"enthusiasm","n. 열광, 열정, 열의"],[1990,50,"bankruptcy","n. 파산"],[1991,50,"pollination","n. (식물) 수분 (작용)"],[1992,50,"prosper","v. 번영하다, 번창하다"],[1993,50,"phase","n. 단계, 상, 면, 양상"],[1994,50,"veterinarian","n. 수의사"],[1995,50,"counterattack","n. 반격, 역습 v. 반격하다, 역습하다"],[1996,50,"cumulative","a. 누적되는, 점증적인"],[1997,50,"infrastructure","n. 사회 기반 시설, (단체 등의) 하부 조직"],[1998,50,"wound","v. 부상하게 하다 n. 부상"],[1999,50,"discrete","a. 분리된, 별개의"],[2000,50,"fluctuation","n. 변동, 오르내림, 요동"]];
+
+    const STORAGE_KEY = "daldal_vocab_v1";
+    const AUTH_KEY = "daldal_vocab_auth_v1";
+    const PASS_HASH = "44b4e9e5";
+
+    function hashPass(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619) >>> 0;
+      }
+      return h.toString(16).padStart(8, "0");
+    }
+
+    function isUnlocked() {
+      try {
+        return localStorage.getItem(AUTH_KEY) === PASS_HASH;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function unlockApp() {
+      const input = document.getElementById("lockInput");
+      const err = document.getElementById("lockErr");
+      const val = input.value.trim();
+      if (hashPass(val) === PASS_HASH) {
+        try {
+          localStorage.setItem(AUTH_KEY, PASS_HASH);
+        } catch (e) {}
+        input.value = "";
+        input.classList.remove("error");
+        err.textContent = "";
+        document.getElementById("lockOverlay").classList.add("hidden");
+        showToast("환영합니다!");
+      } else {
+        input.classList.add("error");
+        err.textContent = "비밀번호가 올바르지 않습니다.";
+        input.select();
+      }
+    }
+
+    function lockApp() {
+      try {
+        localStorage.removeItem(AUTH_KEY);
+      } catch (e) {}
+      clearTimer();
+      document.getElementById("lockOverlay").classList.remove("hidden");
+      document.getElementById("lockErr").textContent = "";
+      document.getElementById("lockInput").classList.remove("error");
+      setTimeout(() => document.getElementById("lockInput").focus(), 50);
+    }
+
+    const state = {
+      mode: "meaning", // meaning | word | mix
+      inputType: "choice", // choice | typing
+      questionCount: 20, // 0 = all
+      rule: "normal", // normal | time | survival
+      selectedDays: new Set([1]),
+      soundEnabled: true,
+      clearedDays: new Set(),
+      wrongIds: new Set(),
+      bestScore: 0,
+      bestCombo: 0,
+      // active game state
+      game: null,
+      timerHandle: null,
+      confettiHandle: null,
+    };
+
+    // Audio synthesizer (Web Audio API)
+    let audioCtx = null;
+    function ensureAudio() {
+      if (!state.soundEnabled) return null;
+      try {
+        if (!audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (Ctx) audioCtx = new Ctx();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function playTone(type) {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === "correct") {
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.07);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.23);
+        } else if (type === "wrong") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(165, now + 0.1);
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+          osc.start(now);
+          osc.stop(now + 0.27);
+        } else if (type === "finish") {
+          [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = "sine";
+            o.connect(g);
+            g.connect(ctx.destination);
+            const t = now + idx * 0.08;
+            o.frequency.setValueAtTime(freq, t);
+            g.gain.setValueAtTime(0.12, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+            o.start(t);
+            o.stop(t + 0.26);
+          });
+        }
+      } catch (e) {}
+    }
+
+    function speakWord(text) {
+      try {
+        if (!("speechSynthesis" in window)) {
+          showToast("이 브라우저에서는 음성 발음을 지원하지 않습니다.");
+          return;
+        }
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-US";
+        utter.rate = 0.92;
+        window.speechSynthesis.speak(utter);
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove("show"), 2000);
+    }
+
+    function saveProgress() {
+      try {
+        const payload = {
+          clearedDays: Array.from(state.clearedDays),
+          wrongIds: Array.from(state.wrongIds),
+          bestScore: state.bestScore,
+          bestCombo: state.bestCombo,
+          soundEnabled: state.soundEnabled,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch (e) {}
+    }
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.clearedDays)) state.clearedDays = new Set(data.clearedDays);
+        if (Array.isArray(data.wrongIds)) state.wrongIds = new Set(data.wrongIds);
+        if (typeof data.bestScore === "number") state.bestScore = data.bestScore;
+        if (typeof data.bestCombo === "number") state.bestCombo = data.bestCombo;
+        if (typeof data.soundEnabled === "boolean") state.soundEnabled = data.soundEnabled;
+      } catch (e) {}
+    }
+
+    function switchTab(tab) {
+      clearTimer();
+      stopConfetti();
+      document.querySelectorAll(".tab-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.tab === tab);
+      });
+      document.getElementById("viewSetup").classList.toggle("hidden", tab !== "setup");
+      document.getElementById("viewGame").classList.toggle("hidden", tab !== "game");
+      document.getElementById("viewResult").classList.toggle("hidden", tab !== "result");
+      document.getElementById("viewWrong").classList.toggle("hidden", tab !== "wrong");
+      document.getElementById("viewBook").classList.toggle("hidden", tab !== "book");
+
+      if (tab === "setup") renderSetupStats();
+      if (tab === "wrong") renderWrongNotes();
+      if (tab === "book") renderWordbook();
+    }
+
+    function renderSetupStats() {
+      document.getElementById("statClearedDays").textContent = `${state.clearedDays.size} / 50`;
+      document.getElementById("statBestScore").textContent = state.bestScore.toLocaleString();
+      document.getElementById("statBestCombo").textContent = state.bestCombo;
+      document.getElementById("wrongBadge").textContent = state.wrongIds.size;
+      document.getElementById("soundToggle").textContent = state.soundEnabled ? "🔊" : "🔇";
+      renderDayGrid();
+    }
+
+    function renderDayGrid() {
+      const grid = document.getElementById("dayGrid");
+      grid.innerHTML = "";
+      for (let d = 1; d <= 50; d++) {
+        const btn = document.createElement("button");
+        btn.className = "day-chip";
+        if (state.selectedDays.has(d)) btn.classList.add("selected");
+        if (state.clearedDays.has(d)) btn.classList.add("cleared");
+        btn.textContent = `D${String(d).padStart(2, "0")}`;
+        btn.addEventListener("click", () => {
+          if (state.selectedDays.has(d)) {
+            state.selectedDays.delete(d);
+          } else {
+            state.selectedDays.add(d);
+          }
+          renderDayGrid();
+          updateSelectedDayInfo();
+        });
+        grid.appendChild(btn);
+      }
+      updateSelectedDayInfo();
+    }
+
+    function updateSelectedDayInfo() {
+      const count = state.selectedDays.size;
+      const label = document.getElementById("selectedDayCount");
+      const btnStart = document.getElementById("btnStartGame");
+      if (count === 0) {
+        label.textContent = "(Day를 1개 이상 선택하세요)";
+        btnStart.disabled = true;
+      } else {
+        const sorted = Array.from(state.selectedDays).sort((a, b) => a - b);
+        const preview = sorted.length <= 3
+          ? sorted.map((d) => `Day ${d}`).join(", ")
+          : `Day ${sorted[0]} 외 ${sorted.length - 1}개`;
+        label.textContent = `(${preview} · ${(count * 40).toLocaleString()}단어)`;
+        btnStart.disabled = false;
+      }
+    }
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startGame(customPool, overrideMode) {
+      ensureAudio();
+      let pool = customPool;
+      if (!pool) {
+        if (state.selectedDays.size === 0) {
+          showToast("최소 1개 이상의 Day를 선택해주세요.");
+          return;
+        }
+        pool = WORDS.filter((w) => state.selectedDays.has(w[1]));
+      }
+      if (pool.length === 0) {
+        showToast("출제할 단어가 없습니다.");
+        return;
+      }
+
+      const modeToUse = overrideMode || state.mode;
+      const shuffledPool = shuffle(pool);
+      const totalQ = state.questionCount === 0
+        ? shuffledPool.length
+        : Math.min(state.questionCount, shuffledPool.length);
+
+      const questions = shuffledPool.slice(0, totalQ).map((item) => {
+        const qMode = modeToUse === "mix"
+          ? (Math.random() < 0.5 ? "meaning" : "word")
+          : modeToUse;
+        return { item, qMode };
+      });
+
+      state.game = {
+        questions,
+        index: 0,
+        score: 0,
+        combo: 0,
+        maxCombo: 0,
+        correctCount: 0,
+        hearts: 3,
+        wrongList: [],
+        answered: false,
+        startTime: Date.now(),
+        poolSource: customPool ? "custom" : "days",
+        lastPool: pool,
+        lastMode: modeToUse,
+        hintLevel: 0,
+      };
+
+      switchTab("game");
+      renderQuestion();
+    }
+
+    function clearTimer() {
+      if (state.timerHandle) {
+        clearInterval(state.timerHandle);
+        state.timerHandle = null;
+      }
+    }
+
+    function renderQuestion() {
+      clearTimer();
+      const g = state.game;
+      if (!g || g.index >= g.questions.length || (state.rule === "survival" && g.hearts <= 0)) {
+        finishGame();
+        return;
+      }
+
+      g.answered = false;
+      g.hintLevel = 0;
+      const { item, qMode } = g.questions[g.index];
+      const [id, day, word, meaning] = item;
+
+      // HUD
+      document.getElementById("hudProgress").textContent = `${g.index + 1} / ${g.questions.length}`;
+      document.getElementById("hudScore").textContent = `${g.score.toLocaleString()}점`;
+      const comboEl = document.getElementById("hudCombo");
+      if (g.combo >= 2) {
+        comboEl.textContent = `🔥 ${g.combo} COMBO`;
+        comboEl.classList.remove("hidden");
+      } else {
+        comboEl.classList.add("hidden");
+      }
+
+      const heartsEl = document.getElementById("hudHearts");
+      if (state.rule === "survival") {
+        heartsEl.textContent = "❤️".repeat(g.hearts) + "🖤".repeat(Math.max(0, 3 - g.hearts));
+        heartsEl.classList.remove("hidden");
+      } else {
+        heartsEl.classList.add("hidden");
+      }
+
+      const pct = (g.index / g.questions.length) * 100;
+      document.getElementById("progressFill").style.width = `${pct}%`;
+
+      // Prompt
+      const modeLabel = qMode === "meaning" ? "뜻 테스트" : "단어 테스트";
+      document.getElementById("qMeta").textContent = `DAY ${String(day).padStart(2, "0")} · #${String(id).padStart(4, "0")} · ${modeLabel}`;
+
+      const promptEl = document.getElementById("qPrompt");
+      const speakBtn = document.getElementById("btnSpeak");
+      if (qMode === "meaning") {
+        promptEl.textContent = word;
+        promptEl.classList.remove("korean");
+        speakBtn.classList.remove("hidden");
+      } else {
+        promptEl.textContent = meaning;
+        promptEl.classList.add("korean");
+        speakBtn.classList.add("hidden");
+      }
+
+      document.getElementById("feedbackBar").classList.add("hidden");
+
+      const choicesGrid = document.getElementById("choicesGrid");
+      const typingWrap = document.getElementById("typingWrap");
+
+      if (state.inputType === "choice") {
+        choicesGrid.classList.remove("hidden");
+        typingWrap.classList.add("hidden");
+        renderChoices(item, qMode);
+      } else {
+        choicesGrid.classList.add("hidden");
+        typingWrap.classList.remove("hidden");
+        const input = document.getElementById("typingInput");
+        input.value = "";
+        input.disabled = false;
+        input.className = "typing-input";
+        input.placeholder = qMode === "word" ? "영단어 스펠링을 입력하세요..." : "한글 뜻의 핵심 단어를 입력하세요...";
+        document.getElementById("typingHint").textContent = qMode === "word"
+          ? `글자 수: ${word.length}글자`
+          : "뜻에 포함된 핵심 의미를 입력하세요";
+        document.getElementById("btnSubmitTyping").disabled = false;
+        setTimeout(() => input.focus(), 30);
+      }
+
+      // Time Attack Timer
+      const timerEl = document.getElementById("hudTimer");
+      const timerTrack = document.getElementById("timerTrack");
+      const timerFill = document.getElementById("timerFill");
+      if (state.rule === "time") {
+        timerEl.classList.remove("hidden");
+        timerTrack.classList.remove("hidden");
+        let remainMs = 10000;
+        const startTs = Date.now();
+        timerFill.style.width = "100%";
+        timerFill.style.backgroundColor = "#4f46e5";
+        timerEl.textContent = "⏱ 10.0s";
+
+        state.timerHandle = setInterval(() => {
+          const elapsed = Date.now() - startTs;
+          remainMs = Math.max(0, 10000 - elapsed);
+          const ratio = (remainMs / 10000) * 100;
+          timerFill.style.width = `${ratio}%`;
+          if (remainMs < 3000) timerFill.style.backgroundColor = "#dc2626";
+          timerEl.textContent = `⏱ ${(remainMs / 1000).toFixed(1)}s`;
+          if (remainMs <= 0) {
+            clearTimer();
+            handleTimeout();
+          }
+        }, 80);
+      } else {
+        timerEl.classList.add("hidden");
+        timerTrack.classList.add("hidden");
+      }
+    }
+
+    function renderChoices(targetItem, qMode) {
+      const grid = document.getElementById("choicesGrid");
+      grid.innerHTML = "";
+
+      const distractors = [];
+      const usedIds = new Set([targetItem[0]]);
+      while (distractors.length < 3) {
+        const rand = WORDS[Math.floor(Math.random() * WORDS.length)];
+        if (!usedIds.has(rand[0])) {
+          usedIds.add(rand[0]);
+          distractors.push(rand);
+        }
+      }
+
+      const options = shuffle([targetItem, ...distractors]);
+      options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.dataset.id = opt[0];
+        const num = document.createElement("span");
+        num.className = "choice-num";
+        num.textContent = idx + 1;
+        const txt = document.createElement("span");
+        txt.textContent = qMode === "meaning" ? opt[3] : opt[2];
+        btn.appendChild(num);
+        btn.appendChild(txt);
+        btn.addEventListener("click", () => handleChoiceAnswer(opt[0], btn));
+        grid.appendChild(btn);
+      });
+    }
+
+    function handleChoiceAnswer(selectedId, clickedBtn) {
+      const g = state.game;
+      if (!g || g.answered) return;
+      g.answered = true;
+      clearTimer();
+
+      const { item, qMode } = g.questions[g.index];
+      const isCorrect = selectedId === item[0];
+
+      document.querySelectorAll(".choice-btn").forEach((btn) => {
+        btn.disabled = true;
+        const bId = Number(btn.dataset.id);
+        if (bId === item[0]) btn.classList.add("correct");
+        else if (btn === clickedBtn && !isCorrect) btn.classList.add("wrong");
+      });
+
+      applyResult(isCorrect, item, qMode);
+    }
+
+    function normalizeKoreanMeaning(str) {
+      return str
+        .replace(/\b(n|v|a|ad|p|c|prep|conj)\./g, " ")
+        .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
+        .replace(/[~·,.;:!?]/g, " ")
+        .split(/\s+/)
+        .map((s) => s.trim())
+        .filter((s) => s.length >= 2);
+    }
+
+    function handleTypingSubmit() {
+      const g = state.game;
+      if (!g || g.answered) return;
+      const input = document.getElementById("typingInput");
+      const rawVal = input.value.trim();
+      if (!rawVal) {
+        showToast("정답을 입력해주세요.");
+        return;
+      }
+
+      g.answered = true;
+      clearTimer();
+      input.disabled = true;
+      document.getElementById("btnSubmitTyping").disabled = true;
+
+      const { item, qMode } = g.questions[g.index];
+      let isCorrect = false;
+      if (qMode === "word") {
+        isCorrect = rawVal.toLowerCase() === item[2].toLowerCase();
+      } else {
+        const userClean = rawVal.replace(/\s+/g, "");
+        const tokens = normalizeKoreanMeaning(item[3]);
+        isCorrect = tokens.some((t) => {
+          const cleanT = t.replace(/\s+/g, "");
+          return cleanT.includes(userClean) || userClean.includes(cleanT.slice(0, 2));
+        });
+      }
+
+      input.classList.add(isCorrect ? "correct" : "wrong");
+      applyResult(isCorrect, item, qMode);
+    }
+
+    function handleTimeout() {
+      const g = state.game;
+      if (!g || g.answered) return;
+      g.answered = true;
+      const { item, qMode } = g.questions[g.index];
+
+      if (state.inputType === "choice") {
+        document.querySelectorAll(".choice-btn").forEach((btn) => {
+          btn.disabled = true;
+          if (Number(btn.dataset.id) === item[0]) btn.classList.add("correct");
+        });
+      } else {
+        const input = document.getElementById("typingInput");
+        input.disabled = true;
+        input.classList.add("wrong");
+        document.getElementById("btnSubmitTyping").disabled = true;
+      }
+
+      applyResult(false, item, qMode, true);
+    }
+
+    function applyResult(isCorrect, item, qMode, isTimeout = false) {
+      const g = state.game;
+      const feedbackBar = document.getElementById("feedbackBar");
+      const feedbackText = document.getElementById("feedbackText");
+
+      if (isCorrect) {
+        g.correctCount++;
+        g.combo++;
+        if (g.combo > g.maxCombo) g.maxCombo = g.combo;
+        const bonus = Math.min(g.combo * 10, 100);
+        g.score += 100 + bonus;
+        state.wrongIds.delete(item[0]);
+        playTone("correct");
+        feedbackBar.className = "feedback-bar ok";
+        feedbackText.textContent = `정답! (+${100 + bonus}점) · ${item[2]} : ${item[3]}`;
+      } else {
+        g.combo = 0;
+        if (state.rule === "survival") g.hearts = Math.max(0, g.hearts - 1);
+        g.wrongList.push(item);
+        state.wrongIds.add(item[0]);
+        playTone("wrong");
+        feedbackBar.className = "feedback-bar no";
+        const prefix = isTimeout ? "시간 초과!" : "오답!";
+        feedbackText.textContent = `${prefix} 정답: ${item[2]} — ${item[3]}`;
+      }
+
+      saveProgress();
+      document.getElementById("wrongBadge").textContent = state.wrongIds.size;
+      document.getElementById("hudScore").textContent = `${g.score.toLocaleString()}점`;
+
+      const comboEl = document.getElementById("hudCombo");
+      if (g.combo >= 2) {
+        comboEl.textContent = `🔥 ${g.combo} COMBO`;
+        comboEl.classList.remove("hidden");
+      } else {
+        comboEl.classList.add("hidden");
+      }
+
+      if (state.rule === "survival") {
+        document.getElementById("hudHearts").textContent =
+          "❤️".repeat(g.hearts) + "🖤".repeat(Math.max(0, 3 - g.hearts));
+      }
+
+      feedbackBar.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      const g = state.game;
+      if (!g) return;
+      g.index++;
+      renderQuestion();
+    }
+
+    function finishGame() {
+      clearTimer();
+      const g = state.game;
+      if (!g) return;
+
+      const total = g.questions.length;
+      const acc = total > 0 ? Math.round((g.correctCount / total) * 100) : 0;
+      const elapsedSec = Math.max(1, Math.round((Date.now() - g.startTime) / 1000));
+
+      if (g.score > state.bestScore) state.bestScore = g.score;
+      if (g.maxCombo > state.bestCombo) state.bestCombo = g.maxCombo;
+
+      // Mark cleared days if accuracy >= 80% and full day or selected pool
+      if (acc >= 80 && g.poolSource === "days") {
+        state.selectedDays.forEach((d) => state.clearedDays.add(d));
+      }
+      saveProgress();
+
+      let grade = "C";
+      if (acc >= 95) grade = "S";
+      else if (acc >= 85) grade = "A";
+      else if (acc >= 70) grade = "B";
+
+      document.getElementById("resGrade").textContent = grade;
+      document.getElementById("resTitle").textContent =
+        state.rule === "survival" && g.hearts <= 0 ? "서바이벌 종료!" : "테스트 완료!";
+      document.getElementById("resSub").textContent = `${total}문제 중 ${g.correctCount}문제 정답`;
+      document.getElementById("resScore").textContent = g.score.toLocaleString();
+      document.getElementById("resAccuracy").textContent = `${acc}%`;
+      document.getElementById("resCombo").textContent = g.maxCombo;
+      document.getElementById("resTime").textContent = `${elapsedSec}초`;
+
+      const retryWrongBtn = document.getElementById("btnRetryWrong");
+      const wrongSec = document.getElementById("resWrongSection");
+      const wrongListEl = document.getElementById("resWrongList");
+      wrongListEl.innerHTML = "";
+
+      if (g.wrongList.length > 0) {
+        retryWrongBtn.classList.remove("hidden");
+        wrongSec.classList.remove("hidden");
+        g.wrongList.forEach((w) => {
+          const row = document.createElement("div");
+          row.className = "word-row";
+          row.innerHTML = `
+            <div class="word-row-left">
+              <span class="word-num">D${String(w[1]).padStart(2, "0")} #${String(w[0]).padStart(4, "0")}</span>
+              <span class="word-en">${w[2]}</span>
+              <span class="word-ko">${w[3]}</span>
+            </div>
+          `;
+          const spk = document.createElement("button");
+          spk.className = "mini-btn";
+          spk.textContent = "🔊";
+          spk.addEventListener("click", () => speakWord(w[2]));
+          row.appendChild(spk);
+          wrongListEl.appendChild(row);
+        });
+      } else {
+        retryWrongBtn.classList.add("hidden");
+        wrongSec.classList.add("hidden");
+      }
+
+      switchTab("result");
+      playTone("finish");
+      if (acc >= 80) startConfetti();
+    }
+
+    // Lightweight Canvas Confetti
+    function startConfetti() {
+      const canvas = document.getElementById("confettiCanvas");
+      canvas.classList.remove("hidden");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext("2d");
+      const colors = ["#f97316", "#4f46e5", "#16a34a", "#eab308", "#ec4899"];
+      const parts = Array.from({ length: 70 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        w: 7 + Math.random() * 6,
+        h: 4 + Math.random() * 5,
+        vy: 2.5 + Math.random() * 3.5,
+        vx: (Math.random() - 0.5) * 2.5,
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.15,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      }));
+
+      let frames = 0;
+      function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        parts.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vrot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        frames++;
+        if (frames < 150) {
+          state.confettiHandle = requestAnimationFrame(tick);
+        } else {
+          stopConfetti();
+        }
+      }
+      state.confettiHandle = requestAnimationFrame(tick);
+    }
+
+    function stopConfetti() {
+      if (state.confettiHandle) {
+        cancelAnimationFrame(state.confettiHandle);
+        state.confettiHandle = null;
+      }
+      document.getElementById("confettiCanvas").classList.add("hidden");
+    }
+
+    // Wrong Notes View
+    function renderWrongNotes() {
+      const container = document.getElementById("wrongListContainer");
+      const items = WORDS.filter((w) => state.wrongIds.has(w[0]));
+      document.getElementById("wrongTotalCount").textContent = items.length;
+      document.getElementById("wrongBadge").textContent = state.wrongIds.size;
+      container.innerHTML = "";
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:40px 16px; color:var(--text-muted); font-size:14px;">아직 틀린 단어가 없습니다. 테스트에서 틀린 단어가 자동으로 이곳에 모입니다.</div>`;
+        return;
+      }
+
+      items.forEach((w) => {
+        const row = document.createElement("div");
+        row.className = "word-row";
+        row.innerHTML = `
+          <div class="word-row-left">
+            <span class="word-num">D${String(w[1]).padStart(2, "0")} #${String(w[0]).padStart(4, "0")}</span>
+            <span class="word-en">${w[2]}</span>
+            <span class="word-ko">${w[3]}</span>
+          </div>
+        `;
+        const actions = document.createElement("div");
+        actions.style.display = "flex";
+        actions.style.gap = "6px";
+
+        const spk = document.createElement("button");
+        spk.className = "mini-btn";
+        spk.textContent = "🔊";
+        spk.addEventListener("click", () => speakWord(w[2]));
+
+        const del = document.createElement("button");
+        del.className = "mini-btn";
+        del.textContent = "삭제";
+        del.addEventListener("click", () => {
+          state.wrongIds.delete(w[0]);
+          saveProgress();
+          renderWrongNotes();
+        });
+
+        actions.appendChild(spk);
+        actions.appendChild(del);
+        row.appendChild(actions);
+        container.appendChild(row);
+      });
+    }
+
+    // Wordbook View
+    function initBookSelect() {
+      const sel = document.getElementById("bookDaySelect");
+      for (let d = 1; d <= 50; d++) {
+        const opt = document.createElement("option");
+        opt.value = String(d);
+        opt.textContent = `Day ${String(d).padStart(2, "0")} (40단어)`;
+        sel.appendChild(opt);
+      }
+    }
+
+    function renderWordbook() {
+      const q = document.getElementById("bookSearchInput").value.trim().toLowerCase();
+      const dayVal = document.getElementById("bookDaySelect").value;
+      const container = document.getElementById("bookListContainer");
+
+      let filtered = WORDS;
+      if (dayVal !== "all") {
+        const dNum = Number(dayVal);
+        filtered = filtered.filter((w) => w[1] === dNum);
+      }
+      if (q) {
+        filtered = filtered.filter((w) => w[2].toLowerCase().includes(q) || w[3].toLowerCase().includes(q));
+      }
+
+      document.getElementById("bookCountInfo").textContent = `총 ${filtered.length.toLocaleString()}개 단어 표시 중`;
+      container.innerHTML = "";
+
+      const slice = filtered.slice(0, 200);
+      slice.forEach((w) => {
+        const row = document.createElement("div");
+        row.className = "word-row";
+        row.innerHTML = `
+          <div class="word-row-left">
+            <span class="word-num">D${String(w[1]).padStart(2, "0")} #${String(w[0]).padStart(4, "0")}</span>
+            <span class="word-en">${w[2]}</span>
+            <span class="word-ko">${w[3]}</span>
+          </div>
+        `;
+        const spk = document.createElement("button");
+        spk.className = "mini-btn";
+        spk.textContent = "🔊";
+        spk.addEventListener("click", () => speakWord(w[2]));
+        row.appendChild(spk);
+        container.appendChild(row);
+      });
+
+      if (filtered.length > 200) {
+        const more = document.createElement("div");
+        more.style.textAlign = "center";
+        more.style.padding = "12px";
+        more.style.fontSize = "12px";
+        more.style.color = "var(--text-muted)";
+        more.textContent = `상위 200개만 표시됩니다. Day를 선택하거나 검색어를 입력해 좁혀보세요.`;
+        container.appendChild(more);
+      }
+    }
+
+    // Event Bindings
+    function bindEvents() {
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+      });
+
+      document.getElementById("soundToggle").addEventListener("click", () => {
+        state.soundEnabled = !state.soundEnabled;
+        saveProgress();
+        document.getElementById("soundToggle").textContent = state.soundEnabled ? "🔊" : "🔇";
+        showToast(state.soundEnabled ? "효과음 켜짐" : "효과음 꺼짐");
+      });
+
+      // Mode cards
+      document.querySelectorAll(".mode-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          document.querySelectorAll(".mode-card").forEach((c) => c.classList.remove("selected"));
+          card.classList.add("selected");
+          state.mode = card.dataset.mode;
+        });
+      });
+
+      // Input type
+      document.querySelectorAll("[data-input]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-input]").forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.inputType = btn.dataset.input;
+        });
+      });
+
+      // Question count
+      document.querySelectorAll("[data-count]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-count]").forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.questionCount = Number(btn.dataset.count);
+        });
+      });
+
+      // Rule
+      document.querySelectorAll("[data-rule]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-rule]").forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.rule = btn.dataset.rule;
+        });
+      });
+
+      // Range presets
+      document.querySelectorAll("[data-range]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const [s, e] = btn.dataset.range.split("-").map(Number);
+          state.selectedDays.clear();
+          for (let d = s; d <= e; d++) state.selectedDays.add(d);
+          renderDayGrid();
+        });
+      });
+
+      document.getElementById("btnPresetAll").addEventListener("click", () => {
+        for (let d = 1; d <= 50; d++) state.selectedDays.add(d);
+        renderDayGrid();
+      });
+
+      document.getElementById("btnPresetClear").addEventListener("click", () => {
+        state.selectedDays.clear();
+        renderDayGrid();
+      });
+
+      document.getElementById("btnStartGame").addEventListener("click", () => startGame());
+      document.getElementById("btnQuitGame").addEventListener("click", () => switchTab("setup"));
+      document.getElementById("btnSpeak").addEventListener("click", () => {
+        if (state.game) speakWord(state.game.questions[state.game.index].item[2]);
+      });
+
+      document.getElementById("btnSubmitTyping").addEventListener("click", handleTypingSubmit);
+      document.getElementById("btnShowHint").addEventListener("click", () => {
+        const g = state.game;
+        if (!g || g.answered) return;
+        const { item, qMode } = g.questions[g.index];
+        g.hintLevel++;
+        if (qMode === "word") {
+          const w = item[2];
+          const reveal = Math.min(g.hintLevel, w.length);
+          document.getElementById("typingHint").textContent =
+            `힌트: ${w.slice(0, reveal)}${"_".repeat(Math.max(0, w.length - reveal))} (${w.length}글자)`;
+        } else {
+          const tokens = normalizeKoreanMeaning(item[3]);
+          const first = tokens[0] || item[3];
+          document.getElementById("typingHint").textContent = `힌트: "${first.slice(0, 1)}..."`;
+        }
+      });
+
+      document.getElementById("btnNextQuestion").addEventListener("click", nextQuestion);
+
+      // Result buttons
+      document.getElementById("btnBackToSetup").addEventListener("click", () => switchTab("setup"));
+      document.getElementById("btnPlayAgain").addEventListener("click", () => {
+        if (state.game) startGame(state.game.lastPool, state.game.lastMode);
+      });
+      document.getElementById("btnRetryWrong").addEventListener("click", () => {
+        if (state.game && state.game.wrongList.length > 0) {
+          startGame(state.game.wrongList, state.game.lastMode);
+        }
+      });
+
+      // Wrong notes actions
+      document.getElementById("btnTestWrongMeaning").addEventListener("click", () => {
+        const items = WORDS.filter((w) => state.wrongIds.has(w[0]));
+        startGame(items, "meaning");
+      });
+      document.getElementById("btnTestWrongWord").addEventListener("click", () => {
+        const items = WORDS.filter((w) => state.wrongIds.has(w[0]));
+        startGame(items, "word");
+      });
+      document.getElementById("btnClearWrong").addEventListener("click", () => {
+        state.wrongIds.clear();
+        saveProgress();
+        renderWrongNotes();
+        showToast("오답 노트를 비웠습니다.");
+      });
+
+      // Wordbook search
+      document.getElementById("bookSearchInput").addEventListener("input", renderWordbook);
+      document.getElementById("bookDaySelect").addEventListener("change", renderWordbook);
+
+      // Keyboard shortcuts during game
+      document.addEventListener("keydown", (e) => {
+        const gameVisible = !document.getElementById("viewGame").classList.contains("hidden");
+        if (!gameVisible || !state.game) return;
+
+        if (state.game.answered) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            nextQuestion();
+          }
+          return;
+        }
+
+        if (state.inputType === "choice") {
+          const idx = ["1", "2", "3", "4"].indexOf(e.key);
+          if (idx !== -1) {
+            const btns = document.querySelectorAll(".choice-btn");
+            if (btns[idx]) btns[idx].click();
+          }
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          handleTypingSubmit();
+        }
+      });
+    }
+
+    window.onload = () => {
+      loadProgress();
+      initBookSelect();
+      bindEvents();
+      renderSetupStats();
+      document.getElementById("btnUnlock").addEventListener("click", unlockApp);
+      document.getElementById("lockInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          unlockApp();
+        }
+      });
+      document.getElementById("btnRelock").addEventListener("click", lockApp);
+      if (isUnlocked()) {
+        document.getElementById("lockOverlay").classList.add("hidden");
+      } else {
+        setTimeout(() => document.getElementById("lockInput").focus(), 50);
+      }
+    };
+  </script>
+</body>
+</html>
